@@ -1,12 +1,15 @@
 package com.kaltura.netkit.utils;
 
+import com.kaltura.netkit.connect.response.ResponseElement;
+import com.kaltura.netkit.connect.response.ResultElement;
+
 /**
  * @hide
  */
 
 public class Accessories {
 
-    public static <D> ResultElement<D> buildResult(final D data,  final ErrorElement error) {
+    public static <D> ResultElement<D> buildResult(final D data, final ErrorElement error) {
         return new ResultElement<D>() {
             @Override
             public D getResponse() {
@@ -25,7 +28,7 @@ public class Accessories {
         };
     }
 
-    public static ResponseElement buildResponse(final String data,  final ErrorElement error) {
+    public static ResponseElement buildResponse(final String data, final ErrorElement error) {
 
         //return (ResponseElement) buildResult(data, error);
 
