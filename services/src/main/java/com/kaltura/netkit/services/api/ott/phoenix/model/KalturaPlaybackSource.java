@@ -1,6 +1,6 @@
 package com.kaltura.netkit.services.api.ott.phoenix.model;
 
-import com.kaltura.netkit.services.api.model.BasePlaybackSource;
+import com.kaltura.netkit.services.api.common.BasePlaybackSource;
 
 /**
  * Created by tehilarozin on 13/02/2017.

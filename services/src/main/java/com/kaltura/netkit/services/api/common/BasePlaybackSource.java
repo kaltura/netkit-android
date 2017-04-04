@@ -1,4 +1,4 @@
-package com.kaltura.netkit.services.api.model;
+package com.kaltura.netkit.services.api.common;
 
 import android.text.TextUtils;
 

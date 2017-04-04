@@ -1,6 +1,6 @@
 package com.kaltura.netkit.services.api.ovp.model;
 
-import com.kaltura.netkit.services.api.model.BasePlaybackSource;
+import com.kaltura.netkit.services.api.common.BasePlaybackSource;
 import com.kaltura.netkit.services.api.ovp.OvpConfigs;
 
 import java.util.Arrays;

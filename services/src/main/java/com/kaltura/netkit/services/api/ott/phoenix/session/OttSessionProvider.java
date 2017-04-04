@@ -1,4 +1,4 @@
-package com.kaltura.netkit.services.utils.session;
+package com.kaltura.netkit.services.api.ott.phoenix.session;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,10 +7,11 @@ import android.util.Log;
 
 import com.kaltura.netkit.connect.response.BaseResult;
 import com.kaltura.netkit.connect.response.PrimitiveResult;
+import com.kaltura.netkit.services.api.common.BaseSessionProvider;
 import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaLoginResponse;
 import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaLoginSession;
 import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaSession;
-import com.kaltura.netkit.services.api.ott.phoenix.model.PhoenixParser;
+import com.kaltura.netkit.services.api.ott.phoenix.PhoenixParser;
 import com.kaltura.netkit.services.api.ott.phoenix.services.OttUserService;
 import com.kaltura.netkit.services.api.ott.phoenix.services.PhoenixService;
 import com.kaltura.netkit.services.api.ott.phoenix.services.PhoenixSessionService;
@@ -305,8 +306,8 @@ public class OttSessionProvider extends BaseSessionProvider {
     }
 
     /**
-     * Ends current active session. if it's a {@link com.kaltura.netkit.services.utils.session.BaseSessionProvider.UserSessionType#User} session
-     * logout, if {@link com.kaltura.netkit.services.utils.session.BaseSessionProvider.UserSessionType#Anonymous} will return, since
+     * Ends current active session. if it's a {@link BaseSessionProvider.UserSessionType#User} session
+     * logout, if {@link BaseSessionProvider.UserSessionType#Anonymous} will return, since
      * logout on anonymous session doesn't make the session invalid.
      *
      * If logout was activated, session params are cleared.

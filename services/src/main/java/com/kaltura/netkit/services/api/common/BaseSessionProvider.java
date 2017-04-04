@@ -1,4 +1,4 @@
-package com.kaltura.netkit.services.utils.session;
+package com.kaltura.netkit.services.api.common;
 
 import android.support.annotation.StringDef;
 
@@ -6,9 +6,9 @@ import com.kaltura.netkit.utils.SessionProvider;
 
 import java.lang.annotation.Retention;
 
-import static com.kaltura.netkit.services.utils.session.BaseSessionProvider.UserSessionType.Anonymous;
-import static com.kaltura.netkit.services.utils.session.BaseSessionProvider.UserSessionType.None;
-import static com.kaltura.netkit.services.utils.session.BaseSessionProvider.UserSessionType.User;
+import static com.kaltura.netkit.services.api.common.BaseSessionProvider.UserSessionType.Anonymous;
+import static com.kaltura.netkit.services.api.common.BaseSessionProvider.UserSessionType.None;
+import static com.kaltura.netkit.services.api.common.BaseSessionProvider.UserSessionType.User;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**

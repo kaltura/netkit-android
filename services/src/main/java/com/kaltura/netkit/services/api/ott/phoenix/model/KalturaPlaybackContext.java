@@ -1,6 +1,6 @@
 package com.kaltura.netkit.services.api.ott.phoenix.model;
 
-import com.kaltura.netkit.services.api.model.BasePlaybackContext;
+import com.kaltura.netkit.services.api.common.BasePlaybackContext;
 
 import java.util.ArrayList;
 

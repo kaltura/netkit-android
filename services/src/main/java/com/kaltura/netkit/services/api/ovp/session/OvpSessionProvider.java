@@ -1,10 +1,11 @@
-package com.kaltura.netkit.services.utils.session;
+package com.kaltura.netkit.services.api.ovp.session;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
+import com.kaltura.netkit.services.api.common.BaseSessionProvider;
 import com.kaltura.netkit.services.api.ovp.KalturaOvpParser;
 import com.kaltura.netkit.services.api.ovp.OvpConfigs;
 import com.kaltura.netkit.services.api.ovp.model.KalturaSessionInfo;
@@ -185,8 +186,8 @@ public class OvpSessionProvider extends BaseSessionProvider {
     }
 
     /**
-     * Ends current active session. if it's a {@link com.kaltura.netkit.services.utils.session.BaseSessionProvider.UserSessionType#User} session
-     * logout, if {@link com.kaltura.netkit.services.utils.session.BaseSessionProvider.UserSessionType#Anonymous} will return, since
+     * Ends current active session. if it's a {@link BaseSessionProvider.UserSessionType#User} session
+     * logout, if {@link BaseSessionProvider.UserSessionType#Anonymous} will return, since
      * logout on anonymous session doesn't make the session invalid.
      * <p>
      * If logout was activated, session params are cleared.

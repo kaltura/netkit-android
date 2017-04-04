@@ -1,4 +1,4 @@
-package com.kaltura.netkit.services.api.ott.phoenix.model;
+package com.kaltura.netkit.services.api.ott.phoenix;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import com.kaltura.netkit.connect.response.BaseResult;
+import com.kaltura.netkit.services.api.ott.phoenix.model.OttResultAdapter;
 import com.kaltura.netkit.utils.GsonParser;
 
 /**

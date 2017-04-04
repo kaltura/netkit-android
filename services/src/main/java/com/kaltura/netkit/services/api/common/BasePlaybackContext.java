@@ -1,4 +1,4 @@
-package com.kaltura.netkit.services.api.model;
+package com.kaltura.netkit.services.api.common;
 
 import com.google.gson.annotations.SerializedName;
 import com.kaltura.netkit.services.api.ott.phoenix.PhoenixErrorHelper;
