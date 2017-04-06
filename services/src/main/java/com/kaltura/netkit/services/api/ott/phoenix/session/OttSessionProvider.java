@@ -218,7 +218,7 @@ public class OttSessionProvider extends BaseSessionProvider {
                             completion(new OnRequestCompletion() {
                                 @Override
                                 public void onComplete(ResponseElement response) {
-                                    handleStartSession(response, completion);
+                                    handleStartSession(response, true, completion);
                                 }
                             });
                     APIOkRequestsExecutor.getSingleton().queue(multiRequest.build());
@@ -230,6 +230,10 @@ public class OttSessionProvider extends BaseSessionProvider {
         });
     }
 
+    private void handleStartSession(ResponseElement response, OnCompletion<PrimitiveResult> completion) {
+        handleStartSession(response, true, completion);
+    }
+
     /**
      * handles start session response.
      * if session was established update members and pass "ks" on the callback
@@ -237,7 +241,7 @@ public class OttSessionProvider extends BaseSessionProvider {
      * @param response
      * @param completion
      */
-    private void handleStartSession(ResponseElement response, OnCompletion<PrimitiveResult> completion) {
+    private void handleStartSession(ResponseElement response, boolean clearOnError, OnCompletion<PrimitiveResult> completion) {
 
         ErrorElement error = null;
 
@@ -249,7 +253,7 @@ public class OttSessionProvider extends BaseSessionProvider {
                 Log.d(TAG, "handleStartSession: first response failure: "+responses.get(0).error);
 
                 //?? clear session?
-                error = ErrorElement.SessionError;
+                error = ErrorElement.SessionError.addMessage(responses.get(0).error.getMessage());
 
             } else {
                 refreshToken = responses.get(0) instanceof KalturaLoginResponse ? ((KalturaLoginResponse) responses.get(0)).getLoginSession().getRefreshToken() :
@@ -277,7 +281,9 @@ public class OttSessionProvider extends BaseSessionProvider {
         }
 
         if (error != null) {
-            clearSession(); //clears current saved data - app can try renewSession with the current credentials. or endSession/startSession
+            if(clearOnError) { // in case of switch user failure - session of current user should not be cleared - still active
+                clearSession(); //clears current saved data - app can try renewSession with the current credentials. or endSession/startSession
+            }
             if (completion != null) {
                 completion.onComplete(new PrimitiveResult(error)); // in case we can't login - app should provide a solution.
             }
