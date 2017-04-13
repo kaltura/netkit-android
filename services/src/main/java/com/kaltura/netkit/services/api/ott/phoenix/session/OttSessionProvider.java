@@ -8,6 +8,7 @@ import android.util.Log;
 import com.kaltura.netkit.connect.response.BaseResult;
 import com.kaltura.netkit.connect.response.PrimitiveResult;
 import com.kaltura.netkit.services.api.common.BaseSessionProvider;
+import com.kaltura.netkit.services.api.ott.phoenix.PhoenixErrorHelper;
 import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaLoginResponse;
 import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaLoginSession;
 import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaSession;
@@ -218,7 +219,7 @@ public class OttSessionProvider extends BaseSessionProvider {
                             completion(new OnRequestCompletion() {
                                 @Override
                                 public void onComplete(ResponseElement response) {
-                                    handleStartSession(response, true, completion);
+                                    handleStartSession(response, false, completion);
                                 }
                             });
                     APIOkRequestsExecutor.getSingleton().queue(multiRequest.build());
@@ -252,8 +253,8 @@ public class OttSessionProvider extends BaseSessionProvider {
             if (responses.get(0).error != null) { //!- failed to login
                 Log.d(TAG, "handleStartSession: first response failure: "+responses.get(0).error);
 
-                //?? clear session?
-                error = ErrorElement.SessionError.addMessage(responses.get(0).error.getMessage());
+                //returns ErrorHelper error if recognizes code otherwise return SessioError
+                error = PhoenixErrorHelper.getErrorElement(ErrorElement.SessionError);
 
             } else {
                 refreshToken = responses.get(0) instanceof KalturaLoginResponse ? ((KalturaLoginResponse) responses.get(0)).getLoginSession().getRefreshToken() :
