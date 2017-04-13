@@ -24,10 +24,10 @@ public class PhoenixErrorHelper {
         return errorElement;
     }
 
-    public static ErrorElement getErrorElement(ErrorElement error){
+    public static ErrorElement getErrorElement(ErrorElement defaultError, ErrorElement error){
         ErrorElement errorElement = getDefinedErrorElement(error.getCode(), error.getMessage());
-        if(errorElement == null){
-            return error;
+        if (errorElement == null){
+            return defaultError;
         }
         return errorElement;
     }
