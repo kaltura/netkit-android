@@ -13,9 +13,9 @@ import com.kaltura.netkit.services.api.ott.phoenix.PhoenixRequestBuilder;
 
 public class OttPushNotificationService extends PhoenixService {
 
-    public static PhoenixRequestBuilder setDevicePushToken(String baseUrl, String token){
-        return setDevicePushToken(baseUrl, token);
-    }
+//    public static PhoenixRequestBuilder setDevicePushToken(String baseUrl, String token){
+//        return setDevicePushToken(baseUrl, token);
+//    }
 
     public static PhoenixRequestBuilder setDevicePushToken(String baseUrl, String token){
         JsonObject params = new JsonObject();
