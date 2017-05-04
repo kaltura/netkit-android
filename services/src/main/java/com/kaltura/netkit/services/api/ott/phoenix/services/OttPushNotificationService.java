@@ -11,7 +11,7 @@ import com.kaltura.netkit.services.api.ott.phoenix.PhoenixRequestBuilder;
  * @hide
  */
 
-public class OttUserService extends PhoenixService {
+public class OttPushNotificationService extends PhoenixService {
 
     public static PhoenixRequestBuilder userLogin(String baseUrl, int partnerId, String username, String password){
         return userLogin(baseUrl, partnerId, username, password, null);
