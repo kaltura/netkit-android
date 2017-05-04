@@ -521,6 +521,6 @@ public class OttSessionProvider extends BaseSessionProvider {
     public void setDevicePushToken(String PushToken){
         PushToken = "fZdmqR2bVQc:APA91bEoftg7msn22c4YBJ6WZeCkzlGD7F26KccsLBtunm6dLkcHAJAFQXugtjHB_V6QXRwQ-7rNIShhMUMaz8_dIokGSHO3ZgWUIdAlUXble99lFqB6LJd1wgQftl7qAaZPKSV2Z0nX";
         MultiRequestBuilder multiRequest = PhoenixService.getMultirequest(apiBaseUrl, null);
-        //multiRequest.add(OttPushNotificationService.setDevicePushToken(apiBaseUrl, ""))
+        multiRequest.add(OttPushNotificationService.setDevicePushToken(apiBaseUrl, ""))
     }
 }
