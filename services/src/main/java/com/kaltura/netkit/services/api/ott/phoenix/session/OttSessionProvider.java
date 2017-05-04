@@ -13,7 +13,6 @@ import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaLoginResponse;
 import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaLoginSession;
 import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaSession;
 import com.kaltura.netkit.services.api.ott.phoenix.PhoenixParser;
-//import com.kaltura.netkit.services.api.ott.phoenix.services.OttPushNotificationService;
 import com.kaltura.netkit.services.api.ott.phoenix.services.OttUserService;
 import com.kaltura.netkit.services.api.ott.phoenix.services.OttP;
 import com.kaltura.netkit.services.api.ott.phoenix.services.PhoenixService;
