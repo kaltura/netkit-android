@@ -516,4 +516,9 @@ public class OttSessionProvider extends BaseSessionProvider {
         maintainSession(data[KsParam], data[RefreshTokenParam], DummyUserId, data.length >= 3 && !data[UdidParam].equals("null") ? data[UdidParam] : null, sessionRecoveryCallback);
         return true;
     }
+    /*Push Notification Section*/
+
+    public void storePushTokenOnTheServer(String PushToken){
+
+    }
 }
