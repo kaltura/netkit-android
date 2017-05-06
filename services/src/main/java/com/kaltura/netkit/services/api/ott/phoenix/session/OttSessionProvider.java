@@ -14,6 +14,7 @@ import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaLoginSession;
 import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaSession;
 import com.kaltura.netkit.services.api.ott.phoenix.PhoenixParser;
 import com.kaltura.netkit.services.api.ott.phoenix.services.OttUserService;
+import com.kaltura.netkit.services.api.ott.phoenix.services.OttPushNotificationService;
 import com.kaltura.netkit.services.api.ott.phoenix.services.PhoenixService;
 import com.kaltura.netkit.services.api.ott.phoenix.services.PhoenixSessionService;
 import com.kaltura.netkit.connect.executor.APIOkRequestsExecutor;
@@ -521,7 +522,7 @@ public class OttSessionProvider extends BaseSessionProvider {
     public void setDevicePushToken(String PushToken){
         PushToken = "fZdmqR2bVQc:APA91bEoftg7msn22c4YBJ6WZeCkzlGD7F26KccsLBtunm6dLkcHAJAFQXugtjHB_V6QXRwQ-7rNIShhMUMaz8_dIokGSHO3ZgWUIdAlUXble99lFqB6LJd1wgQftl7qAaZPKSV2Z0nX";
         MultiRequestBuilder multiRequest = PhoenixService.getMultirequest(apiBaseUrl, null);
-        //multiRequest.add(OttPushNotificationService.setDevicePushToken(apiBaseUrl, PushToken));
+        multiRequest.add(OttPushNotificationService.setDevicePushToken(apiBaseUrl, PushToken));
     }
 
 }
