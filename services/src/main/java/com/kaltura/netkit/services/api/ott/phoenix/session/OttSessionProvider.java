@@ -536,13 +536,13 @@ public class OttSessionProvider extends BaseSessionProvider {
                 .completion(new OnRequestCompletion() {
                     @Override
                     public void onComplete(ResponseElement response) {
-                        ErrorElement error = null;
-                        if (response != null && response.isSuccess()) {
-                            Log.d(TAG, "Push RegistartionID completed successfuly");
-                        } else {
-                            error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("failed to end session");
-                            Log.e(TAG, "Push RegistartionID failed with error : " + error.getMessage());
-                        }
+//                        ErrorElement error = null;
+//                        if (response != null && response.isSuccess()) {
+//                            Log.d(TAG, "Push RegistartionID completed successfuly");
+//                        } else {
+//                            error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("failed to end session");
+//                            Log.e(TAG, "Push RegistartionID failed with error : " + error.getMessage());
+//                        }
                     }
                 }).build());
     }
