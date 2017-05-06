@@ -530,6 +530,7 @@ public class OttSessionProvider extends BaseSessionProvider {
                     String e = "x";
             }
         });
+        APIOkRequestsExecutor.getSingleton().queue(multiRequest.build());
     }
 
 }
