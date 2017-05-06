@@ -23,8 +23,8 @@ public class OttPushNotificationService extends PhoenixService {
         params.addProperty("token", token);
 
         return new PhoenixRequestBuilder()
-                .service("ottPush")
-                .action("register")
+                .service("Notification")
+                .action("setDevicePushToken")
                 .method("POST")
                 .url(baseUrl)
                 .tag("ottuser-register")
