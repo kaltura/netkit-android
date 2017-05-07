@@ -537,19 +537,15 @@ public class OttSessionProvider extends BaseSessionProvider {
                 .completion(new OnRequestCompletion() {
                     @Override
                     public void onComplete(ResponseElement response) {
-                        String e = "x";
-//                        ErrorElement error = null;
-//                        if (response != null && response.isSuccess()) {
-//                            Log.d(TAG, "endSession: logout user session success. clearing session data.");
-//                        } else {
-//                            error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("failed to end session");
-//                            Log.e(TAG, "endSession: session logout failed. clearing session data. " + error.getMessage());
-//                        }
-//                        OttSessionProvider.super.endSession();
-//                        sessionUdid = null;
-//                        if (completion != null) {
-//                            completion.onComplete(new BaseResult(error));
-//                        }
+
+                        ErrorElement error = null;
+                        if (response != null && response.isSuccess()) {
+                            Log.d(TAG, "push token registartion : Succsess.");
+                        } else {
+                            error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("Push Token Registration Failed");
+                            Log.e(TAG, "push token reßgistartion : Failed with error - " + error.getMessage());
+                        }
+
                     }
                 }).build());
 
