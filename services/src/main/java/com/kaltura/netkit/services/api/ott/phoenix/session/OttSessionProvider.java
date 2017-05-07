@@ -521,30 +521,32 @@ public class OttSessionProvider extends BaseSessionProvider {
 
     public void setDevicePushToken(String PushToken){
         PushToken = "fZdmqR2bVQc:APA91bEoftg7msn22c4YBJ6WZeCkzlGD7F26KccsLBtunm6dLkcHAJAFQXugtjHB_V6QXRwQ-7rNIShhMUMaz8_dIokGSHO3ZgWUIdAlUXble99lFqB6LJd1wgQftl7qAaZPKSV2Z0nX";
-        MultiRequestBuilder multiRequest = PhoenixService.getMultirequest(apiBaseUrl, null);
-        multiRequest.add(OttPushNotificationService.setDevicePushToken(apiBaseUrl, PushToken)).
-                completion(new OnRequestCompletion() {
-                @Override
-                public void onComplete(ResponseElement response) {
-                    //handleStartSession(response, completion);
-                    String e = "x";
-            }
-        });
-        APIOkRequestsExecutor.getSingleton().queue(multiRequest.build());
+//        MultiRequestBuilder multiRequest = PhoenixService.getMultirequest(apiBaseUrl, null);
+//        multiRequest.add(OttPushNotificationService.setDevicePushToken(apiBaseUrl, PushToken)).
+//                completion(new OnRequestCompletion() {
+//                @Override
+//                public void onComplete(ResponseElement response) {
+//                    //handleStartSession(response, completion);
+//                    String e = "x";
+//            }
+//        });
+//        APIOkRequestsExecutor.getSingleton().queue(multiRequest.build());
 
-//        APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.setDevicePushToken(apiBaseUrl, PushToken))
-//                .completion(new OnRequestCompletion() {
-//                    @Override
-//                    public void onComplete(ResponseElement response) {
-////                        ErrorElement error = null;
-////                        if (response != null && response.isSuccess()) {
-////                            Log.d(TAG, "Push RegistartionID completed successfuly");
-////                        } else {
-////                            error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("failed to end session");
-////                            Log.e(TAG, "Push RegistartionID failed with error : " + error.getMessage());
-////                        }
-//                    }
-//                }).build());
+        APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.setDevicePushToken(apiBaseUrl, PushToken))
+                .completion(new OnRequestCompletion() {
+                    @Override
+                    public void onComplete(ResponseElement response) {
+                        String e = "x";
+//                        ErrorElement error = null;
+//                        if (response != null && response.isSuccess()) {
+//                            Log.d(TAG, "Push RegistartionID completed successfuly");
+//                        } else {
+//                            error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("failed to end session");
+//                            Log.e(TAG, "Push RegistartionID failed with error : " + error.getMessage());
+//                        }
+                    }
+                }
+                ).build();
     }
 
 }
