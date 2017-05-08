@@ -520,9 +520,9 @@ public class OttSessionProvider extends BaseSessionProvider {
         /*Push Notification Section*/
 
     public void setDevicePushToken(String pushToken){
-        String PushToken = "fZdmqR2bVQc:APA91bEoftg7msn22c4YBJ6WZeCkzlGD7F26KccsLBtunm6dLkcHAJAFQXugtjHB_V6QXRwQ-7rNIShhMUMaz8_dIokGSHO3ZgWUIdAlUXble99lFqB6LJd1wgQftl7qAaZPKSV2Z0nX";
+
         String ks = validateSession();
-        APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.setDevicePushToken(apiBaseUrl, PushToken,ks)
+        APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.setDevicePushToken(apiBaseUrl, pushToken,ks)
                 .completion(new OnRequestCompletion() {
                     @Override
                     public void onComplete(ResponseElement response) {
