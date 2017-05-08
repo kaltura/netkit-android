@@ -59,4 +59,20 @@ public class OttPushNotificationService extends PhoenixService {
                 .params(params);
 
     }
+
+    public static PhoenixRequestBuilder setNotificationSettingsStatus(String baseUrl, String ks, boolean allowNotification, boolean allowFollowNotification){
+        JsonObject params = new JsonObject();
+        params.addProperty("ks",ks);
+        params.addProperty("settings","{\"pushFollowEnabled\":" +allowFollowNotification + "\"pushNotificationEnabled\":"  +allowNotification);
+
+
+        return new PhoenixRequestBuilder()
+                .service("notificationssettings")
+                .action("update")
+                .method("POST")
+                .url(baseUrl)
+                .tag("ottuser-update")
+                .params(params);
+
+    }
 }
