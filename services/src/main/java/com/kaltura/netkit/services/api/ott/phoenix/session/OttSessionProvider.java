@@ -539,5 +539,25 @@ public class OttSessionProvider extends BaseSessionProvider {
                 }).build());
 
     }
+    public void getPushNotificationStates(){
+
+        String ks = validateSession();
+        APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.getNotificationSettingsStatus(apiBaseUrl,ks)
+                .completion(new OnRequestCompletion() {
+                    @Override
+                    public void onComplete(ResponseElement response) {
+
+                        ErrorElement error = null;
+                        if (response != null && response.isSuccess()) {
+                            Log.d(TAG, "push states : Succsess.");
+                        } else {
+                            error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("Push Token states Failed");
+                            Log.e(TAG, "push states : Failed with error - " + error.getMessage());
+                        }
+
+                    }
+                }).build());
+
+    }
 
 }
