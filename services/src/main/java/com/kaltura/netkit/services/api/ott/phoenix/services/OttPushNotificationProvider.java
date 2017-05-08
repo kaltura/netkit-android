@@ -4,9 +4,11 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.kaltura.netkit.connect.executor.APIOkRequestsExecutor;
+import com.kaltura.netkit.connect.response.PrimitiveResult;
 import com.kaltura.netkit.connect.response.ResponseElement;
 import com.kaltura.netkit.services.api.ott.phoenix.session.OttSessionProvider;
 import com.kaltura.netkit.utils.ErrorElement;
+import com.kaltura.netkit.utils.OnCompletion;
 import com.kaltura.netkit.utils.OnRequestCompletion;
 
 /**
@@ -23,33 +25,42 @@ public class OttPushNotificationProvider extends OttSessionProvider{
 
     /*Push Notification Section*/
 
-    public void setDevicePushToken(String pushToken){
+    public void setDevicePushToken(final String pushToken){
 
-        String ks = validateSession();
-        if(TextUtils.isEmpty(ks))
-        {
-            ks = getSessionToken();
-        }
-        APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.setDevicePushToken(apiBaseUrl, pushToken,ks)
-                .completion(new OnRequestCompletion() {
-                    @Override
-                    public void onComplete(ResponseElement response) {
+//        String ks = validateSession();
+//        if(TextUtils.isEmpty(ks))
+//        {
+//            ks = getSessionToken();
+//        }
+//        final String ks = null;
+        getSessionToken(new OnCompletion<PrimitiveResult>() {
+            @Override
+            public void onComplete(PrimitiveResult response) {
+                String ks = validateSession();
 
-                        ErrorElement error = null;
-                        if (response != null && response.isSuccess()) {
-                            Log.d(TAG, "push token registartion : Succsess.");
-                        } else {
-                            error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("Push Token Registration Failed");
-                            Log.e(TAG, "push token reßgistartion : Failed with error - " + error.getMessage());
-                        }
+                APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.setDevicePushToken(apiBaseUrl, pushToken,ks)
+                        .completion(new OnRequestCompletion() {
+                            @Override
+                            public void onComplete(ResponseElement response) {
 
-                    }
-                }).build());
+                                ErrorElement error = null;
+                                if (response != null && response.isSuccess()) {
+                                    Log.d(TAG, "push token registartion : Succsess.");
+                                } else {
+                                    error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("Push Token Registration Failed");
+                                    Log.e(TAG, "push token reßgistartion : Failed with error - " + error.getMessage());
+                                }
+
+                            }
+                        }).build());
+            }
+        });
+
 
     }
     public void getPushNotificationStates(){
 
-        String ks = validateSession();
+        String ks = getSessionToken();
         APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.getNotificationSettingsStatus(apiBaseUrl,ks)
                 .completion(new OnRequestCompletion() {
                     @Override
