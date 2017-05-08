@@ -1,6 +1,6 @@
 package com.kaltura.netkit.services.api.common;
 
-//import com.kaltura.netkit.connect.response.PrimitiveResult;
+import com.kaltura.netkit.connect.response.PrimitiveResult;
 
 /**
  * Created by eladplotski on 08/5/2017.
