@@ -40,6 +40,10 @@ public abstract class BaseSessionProvider implements SessionProvider {
         this.apiBaseUrl =  baseUrl+ apiPrefix;
     }
 
+    protected BaseSessionProvider(){
+
+    }
+
 
     /*public void setSessionProviderListener(SessionProviderListener listener){
         this.sessionListener = listener;
