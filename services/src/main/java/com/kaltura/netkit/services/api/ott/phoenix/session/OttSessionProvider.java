@@ -114,9 +114,6 @@ public class OttSessionProvider extends BaseSessionProvider {
 
         initRefreshExecutor();
     }
-    public OttSessionProvider() {
-
-    }
 
     private void initRefreshExecutor() {
         refreshExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
