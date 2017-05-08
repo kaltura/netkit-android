@@ -8,7 +8,7 @@ import com.kaltura.netkit.connect.response.PrimitiveResult;
 
 public interface PushProviderInterface {
 
-//    String baseUrl();
+    String baseUrl();
 //
 //    void setDevicePushToken(String pushToken,OnCompletion<PrimitiveResult> completion);
 
