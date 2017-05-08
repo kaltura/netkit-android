@@ -1,10 +1,6 @@
 package com.kaltura.netkit.services.api.common;
 
-import android.support.annotation.StringDef;
-
-import java.lang.annotation.Retention;
-
-import static java.lang.annotation.RetentionPolicy.SOURCE;
+import com.kaltura.netkit.connect.response.PrimitiveResult;
 
 /**
  * Created by eladplotski on 08/5/2017.
