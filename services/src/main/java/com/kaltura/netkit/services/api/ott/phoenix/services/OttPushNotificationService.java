@@ -18,8 +18,9 @@ public class OttPushNotificationService extends PhoenixService {
 //    }
 //
 //
-    public static PhoenixRequestBuilder setDevicePushToken(String baseUrl, String token){
+    public static PhoenixRequestBuilder setDevicePushToken(String baseUrl, String token,String ks){
         JsonObject params = new JsonObject();
+        params.addProperty("ks",ks);
         params.addProperty("token", token);
 
         return new PhoenixRequestBuilder()
