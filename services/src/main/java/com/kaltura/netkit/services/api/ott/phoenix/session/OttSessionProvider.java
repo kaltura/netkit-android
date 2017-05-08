@@ -519,21 +519,9 @@ public class OttSessionProvider extends BaseSessionProvider {
     }
         /*Push Notification Section*/
 
-    public void setDevicePushToken(String PushToken){
-        PushToken = "fZdmqR2bVQc:APA91bEoftg7msn22c4YBJ6WZeCkzlGD7F26KccsLBtunm6dLkcHAJAFQXugtjHB_V6QXRwQ-7rNIShhMUMaz8_dIokGSHO3ZgWUIdAlUXble99lFqB6LJd1wgQftl7qAaZPKSV2Z0nX";
-//        MultiRequestBuilder multiRequest = PhoenixService.getMultirequest(apiBaseUrl, null);
-//        multiRequest.add(OttPushNotificationService.setDevicePushToken(apiBaseUrl, PushToken)).
-//                completion(new OnRequestCompletion() {
-//                @Override
-//                public void onComplete(ResponseElement response) {
-//                    //handleStartSession(response, completion);
-//                    String e = "x";
-//            }
-//        });
-//        APIOkRequestsExecutor.getSingleton().queue(multiRequest.build());
-
-
-        APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.setDevicePushToken(apiBaseUrl, PushToken)
+    public void setDevicePushToken(String pushToken){
+        String PushToken = "fZdmqR2bVQc:APA91bEoftg7msn22c4YBJ6WZeCkzlGD7F26KccsLBtunm6dLkcHAJAFQXugtjHB_V6QXRwQ-7rNIShhMUMaz8_dIokGSHO3ZgWUIdAlUXble99lFqB6LJd1wgQftl7qAaZPKSV2Z0nX";
+        APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.setDevicePushToken(apiBaseUrl, pushToken)
                 .completion(new OnRequestCompletion() {
                     @Override
                     public void onComplete(ResponseElement response) {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/netkit/netkit.iml" filepath="$PROJECT_DIR$/netkit/netkit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/netkit-android.iml" filepath="$PROJECT_DIR$/netkit-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/services.iml" filepath="$PROJECT_DIR$/services/services.iml" />
+    </modules>
+  </component>
+</project>
