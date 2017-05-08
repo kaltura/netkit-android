@@ -1,5 +1,6 @@
 package com.kaltura.netkit.services.api.ott.phoenix.services;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.kaltura.netkit.connect.executor.APIOkRequestsExecutor;
@@ -25,6 +26,10 @@ public class OttPushNotificationProvider extends OttSessionProvider{
     public void setDevicePushToken(String pushToken){
 
         String ks = validateSession();
+        if(TextUtils.isEmpty(ks))
+        {
+            ks = getSessionToken();
+        }
         APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.setDevicePushToken(apiBaseUrl, pushToken,ks)
                 .completion(new OnRequestCompletion() {
                     @Override
