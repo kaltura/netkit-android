@@ -39,7 +39,7 @@ public class OttPushNotificationService extends PhoenixService {
     public static PhoenixRequestBuilder addFollowTVSeries(String baseUrl, String ks ,int assetId){
         JsonObject params = new JsonObject();
         params.addProperty("ks",ks);
-        params.addProperty("asset_id",assetId);
+        params.addProperty("assetId",assetId);
         return new PhoenixRequestBuilder()
                 .service("followTvSeries")
                 .action("add")
@@ -53,7 +53,7 @@ public class OttPushNotificationService extends PhoenixService {
     public static PhoenixRequestBuilder deleteFollowTVSeries(String baseUrl, String ks ,int assetId){
         JsonObject params = new JsonObject();
         params.addProperty("ks",ks);
-        params.addProperty("asset_id",assetId);
+        params.addProperty("assetId",assetId);
         return new PhoenixRequestBuilder()
                 .service("followTvSeries")
                 .action("delete")
