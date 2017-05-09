@@ -36,9 +36,9 @@ public class OttPushNotificationService extends PhoenixService {
 
     }
 
-    public static PhoenixRequestBuilder addFollowTVSeries(String baseUrl, String token,String ks ,int assetId){
+    public static PhoenixRequestBuilder addFollowTVSeries(String baseUrl, String ks ,int assetId){
         JsonObject params = new JsonObject();
-        params.addProperty("kse",ks);
+        params.addProperty("ks",ks);
         params.addProperty("asset_id",assetId);
         return new PhoenixRequestBuilder()
                 .service("followTvSeries")

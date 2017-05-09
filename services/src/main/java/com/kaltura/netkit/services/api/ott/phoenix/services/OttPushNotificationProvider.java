@@ -50,6 +50,27 @@ public class OttPushNotificationProvider {
                 }).build());
     }
 
+    public void addFollowTVSeries(int mediaid,final OnCompletion<ResponseElement> pushStateCallback){
+
+        APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.addFollowTVSeries(apiBaseUrl,ks,mediaid)
+                .completion(new OnRequestCompletion() {
+                    @Override
+                    public void onComplete(ResponseElement response) {
+
+                        ErrorElement error = null;
+                        if (response != null && response.isSuccess()) {
+                            Log.d(TAG, "addFollowTVSeries : Succsess.");
+                            pushStateCallback.onComplete(response);
+                        } else {
+                            error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("Push Token states Failed");
+                            pushStateCallback.onComplete(response);
+                            Log.e(TAG, "addFollowTVSeries : Failed with error - " + error.getMessage());
+                        }
+
+                    }
+                }).build());
+
+    }
 
     public void getPushNotificationStates(final OnCompletion<ResponseElement> pushStateCallback){
 
