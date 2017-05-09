@@ -16,11 +16,6 @@ import org.json.JSONObject;
 
 public class OttPushNotificationService extends PhoenixService {
 
-//    public static PhoenixRequestBuilder setDevicePushToken(String baseUrl, String token){
-//        return setDevicePushToken(baseUrl, token);
-//    }
-//
-//
     public static PhoenixRequestBuilder setDevicePushToken(String baseUrl, String token,String ks){
         JsonObject params = new JsonObject();
         params.addProperty("ks",ks);

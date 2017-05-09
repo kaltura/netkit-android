@@ -31,8 +31,6 @@ public class OttPushNotificationProvider {
 
     public void setDevicePushToken(final String pushToken){
 
-//        ks = validateSession();
-
         APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.setDevicePushToken(apiBaseUrl, pushToken,ks)
                 .completion(new OnRequestCompletion() {
                     @Override
@@ -96,7 +94,6 @@ public class OttPushNotificationProvider {
 
     public void getPushNotificationStates(final OnCompletion<ResponseElement> pushStateCallback){
 
-//        String ks = getSessionToken();
         APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.getNotificationSettingsStatus(apiBaseUrl,ks)
                 .completion(new OnRequestCompletion() {
                     @Override
@@ -119,7 +116,6 @@ public class OttPushNotificationProvider {
 
     public void setPushNotificationStates(boolean allowNotification,boolean allowFollowNotification, final OnCompletion<ResponseElement> pushStateCallback){
 
-//        String ks = validateSession();
         APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.setNotificationSettingsStatus(apiBaseUrl,ks,allowNotification,allowFollowNotification)
                 .completion(new OnRequestCompletion() {
                     @Override
