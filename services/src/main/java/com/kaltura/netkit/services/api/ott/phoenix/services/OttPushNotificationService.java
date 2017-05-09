@@ -7,6 +7,9 @@ import android.text.TextUtils;
 import com.google.gson.JsonObject;
 import com.kaltura.netkit.services.api.ott.phoenix.PhoenixRequestBuilder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * @hide
  */
@@ -63,7 +66,7 @@ public class OttPushNotificationService extends PhoenixService {
     public static PhoenixRequestBuilder setNotificationSettingsStatus(String baseUrl, String ks, boolean allowNotification, boolean allowFollowNotification){
         JsonObject params = new JsonObject();
         params.addProperty("ks",ks);
-        params.addProperty("settings","{\"pushFollowEnabled\":" +allowFollowNotification + "\"pushNotificationEnabled\":"  +allowNotification);
+        params.addProperty("settings",getSettingsJson(allowFollowNotification,allowNotification));
 
 
         return new PhoenixRequestBuilder()
@@ -73,6 +76,16 @@ public class OttPushNotificationService extends PhoenixService {
                 .url(baseUrl)
                 .tag("ottuser-update")
                 .params(params);
+
+    }
+    private static String getSettingsJson(boolean allow,boolean follow) {
+
+        try {
+            return new JSONObject("{\"" + "pushNotificationEnabled" + "\":" + "\"" + allow+ "\"" + "," + "pushFollowEnabled" + "\":" + "\"" + follow+ "\"" + "}").toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "";
 
     }
 }
