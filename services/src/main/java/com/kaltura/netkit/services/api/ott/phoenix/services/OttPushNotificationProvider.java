@@ -51,8 +51,7 @@ public class OttPushNotificationProvider {
     }
 
 
-
-    public void getPushNotificationStates(){
+    public void getPushNotificationStates(final OnCompletion<ResponseElement> pushStateCallback){
 
 //        String ks = getSessionToken();
         APIOkRequestsExecutor.getSingleton().queue(OttPushNotificationService.getNotificationSettingsStatus(apiBaseUrl,ks)
@@ -63,8 +62,10 @@ public class OttPushNotificationProvider {
                         ErrorElement error = null;
                         if (response != null && response.isSuccess()) {
                             Log.d(TAG, "push states : Succsess.");
+                            pushStateCallback.onComplete(response);
                         } else {
                             error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("Push Token states Failed");
+                            pushStateCallback.onComplete(response);
                             Log.e(TAG, "push states : Failed with error - " + error.getMessage());
                         }
 
