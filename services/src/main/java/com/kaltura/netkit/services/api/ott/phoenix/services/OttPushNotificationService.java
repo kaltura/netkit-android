@@ -81,7 +81,7 @@ public class OttPushNotificationService extends PhoenixService {
     private static String getSettingsJson(boolean allow,boolean follow) {
 
         try {
-            return new JSONObject("{pushNotificationEnabled : "+ allow +  "," + "pushFollowEnabled : " + follow  + "}").toString();
+            return new JSONObject("{pushNotificationEnabled : "+ allow +  "," + "pushFollowEnabled : " + follow  + "}").toString().replace("\\","");
         } catch (JSONException e) {
             e.printStackTrace();
         }
