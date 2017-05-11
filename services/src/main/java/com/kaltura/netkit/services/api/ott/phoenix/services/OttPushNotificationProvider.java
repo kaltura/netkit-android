@@ -21,14 +21,16 @@ public class OttPushNotificationProvider {
 
     private static final String TAG = "OttPushProvider";
     private static String apiBaseUrl = "";
+    private SessionProvider sp;
 
-    public OttPushNotificationProvider(String baseUrl) {
+    public OttPushNotificationProvider(String baseUrl,SessionProvider sp) {
         this.apiBaseUrl = baseUrl;
+        this.sp = sp;
     }
 
     /*Push Notification Section*/
 
-    public void setDevicePushToken(final String pushToken, SessionProvider sp){
+    public void setDevicePushToken(final String pushToken){
 
         sp.getSessionToken(new OnCompletion<PrimitiveResult>() {
             @Override
@@ -55,7 +57,7 @@ public class OttPushNotificationProvider {
         });
     }
 
-    public void addFollowTVSeries(final int mediaid, SessionProvider sp,final OnCompletion<ResponseElement> pushStateCallback){
+    public void addFollowTVSeries(final int mediaid, final OnCompletion<ResponseElement> pushStateCallback){
 
         sp.getSessionToken(new OnCompletion<PrimitiveResult>() {
             @Override
@@ -83,7 +85,7 @@ public class OttPushNotificationProvider {
             }});
     }
 
-    public void deleteFollowTVSeries(final int mediaid, SessionProvider sp,final OnCompletion<ResponseElement> pushStateCallback){
+    public void deleteFollowTVSeries(final int mediaid,final OnCompletion<ResponseElement> pushStateCallback){
 
         sp.getSessionToken(new OnCompletion<PrimitiveResult>() {
             @Override
@@ -111,7 +113,7 @@ public class OttPushNotificationProvider {
             }});
     }
 
-    public void getPushNotificationStates(SessionProvider sp,final OnCompletion<ResponseElement> pushStateCallback){
+    public void getPushNotificationStates(final OnCompletion<ResponseElement> pushStateCallback){
 
         sp.getSessionToken(new OnCompletion<PrimitiveResult>() {
             @Override
@@ -139,7 +141,7 @@ public class OttPushNotificationProvider {
             }});
     }
 
-    public void setPushNotificationStates(final boolean allowNotification, final boolean allowFollowNotification, SessionProvider sp, final OnCompletion<ResponseElement> pushStateCallback){
+    public void setPushNotificationStates(final boolean allowNotification, final boolean allowFollowNotification, final OnCompletion<ResponseElement> pushStateCallback){
 
         sp.getSessionToken(new OnCompletion<PrimitiveResult>() {
             @Override
