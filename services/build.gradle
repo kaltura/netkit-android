@@ -30,6 +30,8 @@ tasks.withType(Javadoc) {
     options.addBooleanOption('Xdoclint:none', true)
 }
 
+/*
+in case aar copy is needed:
 task copyAAR(type: Copy) {
     def homePath = ant.properties['user.home']
     from('build/outputs/aar')
@@ -37,6 +39,7 @@ task copyAAR(type: Copy) {
     include(project.name + '-debug.aar')
 }
 copyAAR.dependsOn assemble
+*/
 
 dependencies {
     compile project(":netkit")
