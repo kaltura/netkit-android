@@ -8,7 +8,10 @@ import com.kaltura.netkit.connect.request.ExecutedRequest;
 import com.kaltura.netkit.connect.request.RequestConfiguration;
 import com.kaltura.netkit.connect.request.RequestElement;
 import com.kaltura.netkit.connect.request.RequestIdFactory;
-import com.kaltura.netkit.utils.ErrorElement;import com.kaltura.netkit.connect.response.ResponseElement;import java.io.IOException;
+import com.kaltura.netkit.connect.response.ResponseElement;
+import com.kaltura.netkit.utils.ErrorElement;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -32,95 +35,92 @@ import okio.Buffer;
  */
 public class APIOkRequestsExecutor implements RequestQueue {
 
-    public interface IdFactory{
+
+    public interface IdFactory {
         String factorId(String factor);
     }
 
     public static final String TAG = "APIOkRequestsExecutor";
     static final MediaType JSON_MediaType = MediaType.parse("application/json");
 
-    public static RequestConfiguration getDefaultRequestConfiguration() {
-        return new RequestConfiguration() {
-            @Override
-            public long getReadTimeout() {
-                return 20000;
-            }
+    private RequestConfiguration defaultConfiguration = new RequestConfiguration() {
+        @Override
+        public long getReadTimeout() {
+            return 20000;
+        }
 
-            @Override
-            public long getWriteTimeout() {
-                return 20000;
-            }
+        @Override
+        public long getWriteTimeout() {
+            return 20000;
+        }
 
-            @Override
-            public long getConnectTimeout() {
-                return 10000;
-            }
+        @Override
+        public long getConnectTimeout() {
+            return 10000;
+        }
 
-            @Override
-            public int getRetry() {
-                return 2;
-            }
+        @Override
+        public int getRetry() {
+            return 2;
+        }
+    };
 
-            @Override
-            public boolean printLogs() {
-                return false;
-            }
-        };
-    }
 
     //private String mEndPoint = "http://52.210.223.65/8080/v4_0/api_v3";
 
     private OkHttpClient mOkClient;
     private boolean addSig;
     private IdFactory idFactory = new RequestIdFactory(); // default
-    private boolean printLogs;
+    private boolean enableLogs = true;
 
     private static APIOkRequestsExecutor self;
 
-    public static APIOkRequestsExecutor getSingleton(){
-        if(self == null){
+    public static APIOkRequestsExecutor getSingleton() {
+        if (self == null) {
             self = new APIOkRequestsExecutor();
         }
         return self;
     }
 
     //private IdInterceptor idInterceptor = new IdInterceptor();
-   // private GzipInterceptor gzipInterceptor = new GzipInterceptor();
+    // private GzipInterceptor gzipInterceptor = new GzipInterceptor();
 
-    public APIOkRequestsExecutor(){
-        getOkClient();
+    public APIOkRequestsExecutor() {
+        mOkClient = configClient(createOkClientBuilder(), defaultConfiguration).build();
     }
 
-    public APIOkRequestsExecutor setRequestIdFactory(IdFactory factory){
+    public APIOkRequestsExecutor(RequestConfiguration defaultConfiguration) {
+        setDefaultConfiguration(defaultConfiguration);
+    }
+
+
+    public APIOkRequestsExecutor setRequestIdFactory(IdFactory factory) {
         this.idFactory = factory;
         return this;
     }
 
-    //change default request config
-    private OkHttpClient getOkClient(RequestConfiguration configuration){
-        if(mOkClient == null) {
-            OkHttpClient.Builder builder = configClient(getOkClientBuilder(), configuration);
-            mOkClient = builder.build();
+    /**
+     * in case of specific request configurations, pass newly built client based on mOkClient instance.
+     *
+     * @param configuration
+     * @return
+     */
+    private OkHttpClient getOkClient(RequestConfiguration configuration) {
+
+        if (configuration != null) {
+            // returns specific client for configuration
+            return configClient(mOkClient.newBuilder(), configuration).build();
         }
+        //default configurable client instance
         return mOkClient;
     }
 
-    //create okClient with default config
-    private OkHttpClient getOkClient(){
-        return getOkClient(null);
-    }
-
     @NonNull
-    private OkHttpClient.Builder getOkClientBuilder() {
+    private OkHttpClient.Builder createOkClientBuilder() {
         return new OkHttpClient.Builder().connectionPool(new ConnectionPool()); // default connection pool - holds 5 connections up to 5 minutes idle time
     }
 
-    private OkHttpClient.Builder configClient(OkHttpClient.Builder builder, RequestConfiguration config){
-        if(config == null){
-            config = getDefaultRequestConfiguration();
-        }
-
-        this.printLogs = config.printLogs();
+    private OkHttpClient.Builder configClient(OkHttpClient.Builder builder, RequestConfiguration config) {
         builder.followRedirects(true).connectTimeout(config.getConnectTimeout(), TimeUnit.MILLISECONDS)
                 .readTimeout(config.getReadTimeout(), TimeUnit.MILLISECONDS)
                 .writeTimeout(config.getWriteTimeout(), TimeUnit.MILLISECONDS)
@@ -129,10 +129,20 @@ public class APIOkRequestsExecutor implements RequestQueue {
         return builder;
     }
 
+    @Override
+    public void setDefaultConfiguration(RequestConfiguration defaultConfiguration) {
+        this.defaultConfiguration = defaultConfiguration;
+        mOkClient = configClient(createOkClientBuilder(), defaultConfiguration).build();
+    }
+
+    @Override
+    public void enableLogs(boolean enable) {
+        this.enableLogs = enable;
+    }
 
     private RequestBody buildMultipartBody(HashMap<String, String> params) {
         MultipartBody.Builder bodyBuilder = new MultipartBody.Builder();
-        for(String key : params.keySet()){
+        for (String key : params.keySet()) {
             bodyBuilder.addFormDataPart(key, params.get(key));
         }
         return bodyBuilder.build();
@@ -140,7 +150,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     private RequestBody buildFormBody(HashMap<String, String> params) {
         FormBody.Builder bodyBuilder = new FormBody.Builder();
-        for(String key : params.keySet()){
+        for (String key : params.keySet()) {
             bodyBuilder.add(key, params.get(key));
         }
         return bodyBuilder.build();
@@ -160,7 +170,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                 @Override
                 public void onFailure(Call call, IOException e) { //!! in case of request error on client side
 
-                    if(call.isCanceled()){
+                    if (call.isCanceled()) {
                         //logger.warn("onFailure: call "+call.request().tag()+" was canceled. not passing results");
                         return;
                     }
@@ -171,7 +181,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                    if(call.isCanceled()){
+                    if (call.isCanceled()) {
 //                        logger.warn("call "+call.request().tag()+" was canceled. not passing results");
                         return;
                     }
@@ -182,7 +192,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                     Log.v(TAG, "enqueued request finished with success, results passed to callback");
                 }
             });
-            return  (String) call.request().tag();
+            return (String) call.request().tag();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -194,7 +204,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     private String getErrorResponse(Exception e) {
-        return e.getClass().getName()+": "+ e.getMessage();
+        return e.getClass().getName() + ": " + e.getMessage();
     }
 
     @Override
@@ -203,9 +213,9 @@ public class APIOkRequestsExecutor implements RequestQueue {
             Response response = getOkClient(request.config()).newCall(buildRestRequest(request, BodyBuilder.Default)).execute();
             return onGotResponse(response, request);
 
-        } catch (IOException e){
+        } catch (IOException e) {
             // failure on request execution - create error response
-             return new ExecutedRequest().response(getErrorResponse(e)).success(false);
+            return new ExecutedRequest().response(getErrorResponse(e)).success(false);
         }
     }
 
@@ -213,10 +223,10 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     //@Override
     public boolean hasRequest(String reqId) {
-        Dispatcher dispatcher = getOkClient().dispatcher();
+        Dispatcher dispatcher = getOkClient(null).dispatcher();
 
         Call call = findCall(reqId, dispatcher.queuedCalls());
-        if(call != null){
+        if (call != null) {
             return true;
         }
         call = findCall(reqId, dispatcher.runningCalls());
@@ -225,23 +235,23 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     @Override
     public void cancelRequest(String reqId) {
-        Dispatcher dispatcher = getOkClient().dispatcher();
+        Dispatcher dispatcher = getOkClient(null).dispatcher();
 
         Call call = findCall(reqId, dispatcher.queuedCalls());
-        if(call != null){
+        if (call != null) {
             call.cancel();
-            Log.d(TAG, "call canceled:"+call.request().tag());
+            Log.d(TAG, "call canceled:" + call.request().tag());
         }
         call = findCall(reqId, dispatcher.runningCalls());
-        if(call != null){
+        if (call != null) {
             call.cancel();
-            Log.d(TAG, "call canceled:"+call.request().tag());
+            Log.d(TAG, "call canceled:" + call.request().tag());
         }
     }
 
     private Call findCall(String reqId, List<Call> calls) {
-        for(Call call : calls) {
-            if(call.request().tag().equals(reqId)) {
+        for (Call call : calls) {
+            if (call.request().tag().equals(reqId)) {
                 return call;
             }
         }
@@ -250,7 +260,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     @Override
     public void clearRequests() {
-        if(mOkClient != null) {
+        if (mOkClient != null) {
             mOkClient.dispatcher().cancelAll();
         }
     }
@@ -285,7 +295,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     private String getRequestId(Response response) {
         try {
             return response.request().tag().toString();
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return "";
         }
     }
@@ -294,7 +304,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
         return header.contains("application/xml") ? "xml" : "json";
     }
 
-    private interface BodyBuilder{
+    private interface BodyBuilder {
         RequestBody build(RequestElement requestElement);
 
         BodyBuilder Default = new BodyBuilder() {
@@ -309,7 +319,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
         String url = request.getUrl();
 
-        if(printLogs) {
+        if (enableLogs) {
             Log.d(TAG, "request url: " + url + "\nrequest body:\n" + request.getBody() + "\n");
         }
 

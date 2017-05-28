@@ -86,6 +86,11 @@ public class RequestBuilder<T extends RequestBuilder> {
         return new MultiRequestBuilder(this).add(requestBuilder);
     }
 
+    public T configuration(RequestConfiguration configuration) {
+        this.configuration = configuration;
+        return (T) this;
+    }
+
     public RequestElement build(){
         return new RequestElement() {
 
