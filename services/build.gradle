@@ -30,6 +30,13 @@ tasks.withType(Javadoc) {
     options.addBooleanOption('Xdoclint:none', true)
 }
 
+task copyAAR(type: Copy) {
+    def homePath = ant.properties['user.home']
+    from('build/outputs/aar')
+    into(homePath + "/mediago-aars")
+    include(project.name + '-debug.aar')
+}
+copyAAR.dependsOn assemble
 
 dependencies {
     compile project(":netkit")

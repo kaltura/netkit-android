@@ -58,6 +58,11 @@ public class APIOkRequestsExecutor implements RequestQueue {
         public int getRetry() {
             return 2;
         }
+
+        @Override
+        public boolean printLogs() {
+            return false;
+        }
     };
 
     //private String mEndPoint = "http://52.210.223.65/8080/v4_0/api_v3";
@@ -65,6 +70,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     private OkHttpClient mOkClient;
     private boolean addSig;
     private IdFactory idFactory = new RequestIdFactory(); // default
+    private boolean printLogs;
 
     private static APIOkRequestsExecutor self;
 
@@ -106,6 +112,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     private OkHttpClient.Builder configClient(OkHttpClient.Builder builder, RequestConfiguration config){
+        this.printLogs = config.printLogs();
         builder.followRedirects(true).connectTimeout(config.getConnectTimeout(), TimeUnit.MILLISECONDS)
                 .readTimeout(config.getReadTimeout(), TimeUnit.MILLISECONDS)
                 .writeTimeout(config.getWriteTimeout(), TimeUnit.MILLISECONDS)
@@ -293,7 +300,10 @@ public class APIOkRequestsExecutor implements RequestQueue {
     private Request buildRestRequest(RequestElement request, BodyBuilder bodyBuilder) {
 
         String url = request.getUrl();
-        System.out.println("request url: "+url +"\nrequest body:\n"+request.getBody()+"\n");
+
+        if(printLogs) {
+            Log.d(TAG, "request url: " + url + "\nrequest body:\n" + request.getBody() + "\n");
+        }
 
         RequestBody body = bodyBuilder.build(request);// RequestBody.create(JSON_MediaType, action.getBody().getBytes());
 

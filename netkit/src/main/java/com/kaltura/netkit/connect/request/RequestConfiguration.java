@@ -9,4 +9,5 @@ public interface RequestConfiguration {
     long getWriteTimeout();
     long getConnectTimeout();
     int getRetry();
+    boolean printLogs();
 }
