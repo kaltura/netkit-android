@@ -1,6 +1,7 @@
 package com.kaltura.netkit.connect.executor;
 
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.kaltura.netkit.connect.request.ExecutedRequest;
@@ -38,32 +39,34 @@ public class APIOkRequestsExecutor implements RequestQueue {
     public static final String TAG = "APIOkRequestsExecutor";
     static final MediaType JSON_MediaType = MediaType.parse("application/json");
 
-    public static RequestConfiguration DefaultConfig = new RequestConfiguration() {
-        @Override
-        public long getReadTimeout() {
-            return 20000;
-        }
+    public static RequestConfiguration getDefaultRequestConfiguration() {
+        return new RequestConfiguration() {
+            @Override
+            public long getReadTimeout() {
+                return 20000;
+            }
 
-        @Override
-        public long getWriteTimeout() {
-            return 20000;
-        }
+            @Override
+            public long getWriteTimeout() {
+                return 20000;
+            }
 
-        @Override
-        public long getConnectTimeout() {
-            return 10000;
-        }
+            @Override
+            public long getConnectTimeout() {
+                return 10000;
+            }
 
-        @Override
-        public int getRetry() {
-            return 2;
-        }
+            @Override
+            public int getRetry() {
+                return 2;
+            }
 
-        @Override
-        public boolean printLogs() {
-            return false;
-        }
-    };
+            @Override
+            public boolean printLogs() {
+                return false;
+            }
+        };
+    }
 
     //private String mEndPoint = "http://52.210.223.65/8080/v4_0/api_v3";
 
@@ -95,8 +98,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     //change default request config
     private OkHttpClient getOkClient(RequestConfiguration configuration){
-        if(configuration != null) {
-            OkHttpClient.Builder builder = configClient(getOkClient().newBuilder(), configuration);
+        if(mOkClient == null) {
+            OkHttpClient.Builder builder = configClient(getOkClientBuilder(), configuration);
             mOkClient = builder.build();
         }
         return mOkClient;
@@ -104,14 +107,19 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     //create okClient with default config
     private OkHttpClient getOkClient(){
-        if(mOkClient == null){
-            mOkClient = configClient(new OkHttpClient.Builder()
-                    .connectionPool(new ConnectionPool()), DefaultConfig).build(); // default connection pool - holds 5 connections up to 5 minutes idle time
-        }
-        return mOkClient;
+        return getOkClient(null);
+    }
+
+    @NonNull
+    private OkHttpClient.Builder getOkClientBuilder() {
+        return new OkHttpClient.Builder().connectionPool(new ConnectionPool()); // default connection pool - holds 5 connections up to 5 minutes idle time
     }
 
     private OkHttpClient.Builder configClient(OkHttpClient.Builder builder, RequestConfiguration config){
+        if(config == null){
+            config = getDefaultRequestConfiguration();
+        }
+
         this.printLogs = config.printLogs();
         builder.followRedirects(true).connectTimeout(config.getConnectTimeout(), TimeUnit.MILLISECONDS)
                 .readTimeout(config.getReadTimeout(), TimeUnit.MILLISECONDS)
