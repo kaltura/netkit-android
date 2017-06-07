@@ -1,26 +1,34 @@
 package com.kaltura.netkit.utils;
 
+import android.util.Log;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+
 /**
  * Created by tehilarozin on 04/12/2016.
  */
 
-public abstract class CallableLoader extends BaseCallableLoader<Void> {
+public abstract class CallableLoader<T> implements Callable<T> {
 
-   // protected final String loadId = this.toString() + ":" + System.currentTimeMillis();
+    protected final String loadId = this.toString() + ":" + System.currentTimeMillis();
 
     protected OnCompletion completion;
+    protected CountDownLatch waitCompletion;
 
-    //protected final Object syncObject = new Object();
+    protected String TAG;
+    protected final Object syncObject = new Object();
+    protected boolean isCanceled = false;
 
 
     protected CallableLoader(String tag, OnCompletion completion) {
-        super(tag);
         this.completion = completion;
+        this.TAG = tag;
     }
 
-    //abstract protected Void load() throws InterruptedException;
+    abstract protected T load() throws InterruptedException;
 
-    /*abstract protected void cancel();
+    abstract protected void cancel();
 
     protected void notifyCompletion() {
         if (waitCompletion != null) {
@@ -29,9 +37,9 @@ public abstract class CallableLoader extends BaseCallableLoader<Void> {
                 waitCompletion.countDown();
             }
         }
-    }*/
+    }
 
-    /*protected void waitCompletion(int countDownLatch) throws InterruptedException {
+    protected void waitCompletion(int countDownLatch) throws InterruptedException {
         if(waitCompletion != null && waitCompletion.getCount() == countDownLatch){
             return;
         }
@@ -46,10 +54,10 @@ public abstract class CallableLoader extends BaseCallableLoader<Void> {
 
     protected void waitCompletion() throws InterruptedException {
         waitCompletion(1);
-    }*/
+    }
 
-    /*@Override
-    public Void call() {
+    @Override
+    public T call() {
         if (isCanceled()) { // needed in case cancel done before callable started
             Log.i(TAG, loadId + ": Loader call canceled");
             return null;
@@ -58,22 +66,23 @@ public abstract class CallableLoader extends BaseCallableLoader<Void> {
         Log.i(TAG, loadId + ": Loader call started ");
 
         try {
-            load();
+            T result = load();
             Log.i(TAG, loadId + ": load finished with no interruptions");
+            return result;
         } catch (InterruptedException e) {
             interrupted();
         }
         return null;
-    }*/
+    }
 
-   /* protected boolean isCanceled() {
+    protected boolean isCanceled() {
         return isCanceled;// Thread.currentThread().isInterrupted();
     }
 
     protected void interrupted() {
         Log.i(TAG, loadId + ": loader operation interrupted ");
         cancel();
-    }*/
+    }
 
 
 }
