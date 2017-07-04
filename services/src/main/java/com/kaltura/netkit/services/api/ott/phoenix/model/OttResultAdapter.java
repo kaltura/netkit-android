@@ -3,7 +3,6 @@ package com.kaltura.netkit.services.api.ott.phoenix.model;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -70,8 +69,7 @@ public class OttResultAdapter implements JsonDeserializer<BaseResult> {
                 try {
                     String clzName = getClass().getPackage().getName() + "." + objectType;
                     Class clz = Class.forName(clzName);
-                    //baseResult = (BaseResult) new Gson().fromJson(result, clz);
-                    baseResult = (BaseResult) new GsonBuilder().registerTypeHierarchyAdapter(BaseResult.class, new OttResultAdapter()).create().fromJson(result, clz);
+                    baseResult = (BaseResult) new Gson().fromJson(result, clz);
                 } catch (ClassNotFoundException e) {
                     Log.e("OttResultAdapter","can't find class "+objectType+ " in the provided package\n ");
                     e.printStackTrace();
