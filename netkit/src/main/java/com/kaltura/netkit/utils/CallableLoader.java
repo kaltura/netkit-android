@@ -4,12 +4,13 @@ import android.util.Log;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by tehilarozin on 04/12/2016.
  */
 
-public abstract class CallableLoader implements Callable<Void> {
+public abstract class CallableLoader<T> implements Callable<T> {
 
     protected final String loadId = this.toString() + ":" + System.currentTimeMillis();
 
@@ -18,7 +19,7 @@ public abstract class CallableLoader implements Callable<Void> {
 
     protected String TAG;
     protected final Object syncObject = new Object();
-    protected boolean isCanceled = false;
+    protected AtomicBoolean isCanceled = new AtomicBoolean(false);
 
 
     protected CallableLoader(String tag, OnCompletion completion) {
@@ -26,9 +27,11 @@ public abstract class CallableLoader implements Callable<Void> {
         this.TAG = tag;
     }
 
-    abstract protected void load() throws InterruptedException;
+    abstract protected T load() throws InterruptedException;
 
-    abstract protected void cancel();
+    protected void cancel(){
+        isCanceled.set(true);
+    }
 
     protected void notifyCompletion() {
         if (waitCompletion != null) {
@@ -57,7 +60,7 @@ public abstract class CallableLoader implements Callable<Void> {
     }
 
     @Override
-    public Void call() {
+    public T call() {
         if (isCanceled()) { // needed in case cancel done before callable started
             Log.i(TAG, loadId + ": Loader call canceled");
             return null;
@@ -66,8 +69,9 @@ public abstract class CallableLoader implements Callable<Void> {
         Log.i(TAG, loadId + ": Loader call started ");
 
         try {
-            load();
+            T result = load();
             Log.i(TAG, loadId + ": load finished with no interruptions");
+            return result;
         } catch (InterruptedException e) {
             interrupted();
         }
@@ -75,7 +79,7 @@ public abstract class CallableLoader implements Callable<Void> {
     }
 
     protected boolean isCanceled() {
-        return isCanceled;// Thread.currentThread().isInterrupted();
+        return isCanceled.get();// Thread.currentThread().isInterrupted();
     }
 
     protected void interrupted() {
