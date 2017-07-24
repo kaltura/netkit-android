@@ -5,13 +5,24 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.BadRequestErrorCode;
+import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.CanceledRequestCode;
+import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.ConnectionErrorCode;
+import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.GeneralErrorCode;
+import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.InternalServerErrorCode;
+import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.LoadErrorCode;
+import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.NotFoundCode;
+import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.ServiceUnavailableErrorCode;
+import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.SessionErrorCode;
+
 /**
  */
 
 public class ErrorElement {
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({})
+    @IntDef({BadRequestErrorCode, NotFoundCode, ConnectionErrorCode, InternalServerErrorCode,
+            ServiceUnavailableErrorCode, LoadErrorCode, CanceledRequestCode, SessionErrorCode, GeneralErrorCode})
     public @interface ErrorCode{
         int BadRequestErrorCode = 400;
         int NotFoundCode = 404;
@@ -26,14 +37,14 @@ public class ErrorElement {
         int GeneralErrorCode = 666;
     }
 
-    public static ErrorElement GeneralError = new ErrorElement("GeneralError", "Something went wrong", ErrorCode.GeneralErrorCode);
-    public static ErrorElement NotFound = new ErrorElement("NotFound", "Resource not found", ErrorCode.NotFoundCode);
-    public static ErrorElement LoadError = new ErrorElement("LoadError", "Failed to load data from source", ErrorCode.LoadErrorCode);
-    public static ErrorElement ServiceUnavailableError = new ErrorElement("ServiceUnavailableError", "Requested service is unavailable", ErrorCode.ServiceUnavailableErrorCode);
-    public static ErrorElement CanceledRequest = new ErrorElement("CanceledRequest", "Request was canceled", ErrorCode.CanceledRequestCode);
-    public static ErrorElement ConnectionError = new ErrorElement("ConnectionError", "Failed to connect to source", ErrorCode.ConnectionErrorCode);
-    public static ErrorElement BadRequestError = new ErrorElement("BadRequestError", "Invalid or missing request params", ErrorCode.BadRequestErrorCode);
-    public static ErrorElement SessionError = new ErrorElement("SessionError", "Failed to obtain session", ErrorCode.SessionErrorCode);
+    public static ErrorElement GeneralError = new ErrorElement("GeneralError", "Something went wrong", GeneralErrorCode);
+    public static ErrorElement NotFound = new ErrorElement("NotFound", "Resource not found", NotFoundCode);
+    public static ErrorElement LoadError = new ErrorElement("LoadError", "Failed to load data from source", LoadErrorCode);
+    public static ErrorElement ServiceUnavailableError = new ErrorElement("ServiceUnavailableError", "Requested service is unavailable", ServiceUnavailableErrorCode);
+    public static ErrorElement CanceledRequest = new ErrorElement("CanceledRequest", "Request was canceled", CanceledRequestCode);
+    public static ErrorElement ConnectionError = new ErrorElement("ConnectionError", "Failed to connect to source", ConnectionErrorCode);
+    public static ErrorElement BadRequestError = new ErrorElement("BadRequestError", "Invalid or missing request params", BadRequestErrorCode);
+    public static ErrorElement SessionError = new ErrorElement("SessionError", "Failed to obtain session", SessionErrorCode);
 
     public String name;
     private String message;
