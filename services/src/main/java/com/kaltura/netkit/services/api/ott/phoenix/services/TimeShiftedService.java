@@ -22,6 +22,7 @@ public class TimeShiftedService extends PhoenixService {
     private static JsonObject getTimeShiftedGetReqParams(String ks) {
         JsonObject getParams = new JsonObject();
         getParams.addProperty("ks", ks);
+        getParams.addProperty("objectType", "KalturaTimeShiftedTvPartnerSettings");
 
         return getParams;
     }
