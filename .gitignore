@@ -1,1 +1,7 @@
 local.properties
+.gradle/
+.idea/
+build/
+netkit-android.iml
+services/services.iml
+netkit/netkit.iml

@@ -1,5 +1,6 @@
 package com.kaltura.netkit.services.api.ott.phoenix.model;
 
+import com.google.gson.annotations.SerializedName;
 import com.kaltura.netkit.connect.response.BaseResult;
 
 /**
@@ -8,12 +9,16 @@ import com.kaltura.netkit.connect.response.BaseResult;
 
 public class KalturaTimeShiftedTvPartnerSettings extends BaseResult {
 
+    @SerializedName(value = "catchUpEnabled")
     boolean catchUpEnabled;
 
+    @SerializedName(value = "startOverEnabled")
     boolean startOverEnabled;
 
+    @SerializedName(value = "trickPlayEnabled")
     boolean trickPlayEnabled;
 
+    @SerializedName(value = "cdvrEnabled")
     boolean cdvrEnabled;
 
     int catchUpBufferLength;
