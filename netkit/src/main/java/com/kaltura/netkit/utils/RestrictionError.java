@@ -7,15 +7,24 @@ package com.kaltura.netkit.utils;
 public class RestrictionError extends ErrorElement {
 
     public enum Restriction{
-        NotAllowed,
-        NotEntitled,
-        ConcurrencyLimitation,
-        Suspended
+        NotAllowed(533),
+        NotEntitled(534),
+        ConcurrencyLimitation(535),
+        Suspended(536);
+
+        private final int id;
+        Restriction(int id) {
+            this.id = id;
+        }
+        public int getValue() {
+            return id;
+        }
     }
 
 
     public RestrictionError(String message, Restriction restriction) {
-        super("RestrictionError", message, 533);
+
+        super("RestrictionError", message, restriction.getValue());
         this.extra = restriction;
     }
 
