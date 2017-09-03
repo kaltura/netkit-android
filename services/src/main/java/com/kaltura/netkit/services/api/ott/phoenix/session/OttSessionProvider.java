@@ -14,6 +14,7 @@ import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaLoginSession;
 import com.kaltura.netkit.services.api.ott.phoenix.model.KalturaSession;
 import com.kaltura.netkit.services.api.ott.phoenix.PhoenixParser;
 import com.kaltura.netkit.services.api.ott.phoenix.services.OttUserService;
+import com.kaltura.netkit.services.api.ott.phoenix.services.OttPushNotificationService;
 import com.kaltura.netkit.services.api.ott.phoenix.services.PhoenixService;
 import com.kaltura.netkit.services.api.ott.phoenix.services.PhoenixSessionService;
 import com.kaltura.netkit.connect.executor.APIOkRequestsExecutor;
@@ -434,8 +435,8 @@ public class OttSessionProvider extends BaseSessionProvider {
                         }
 
                         final PrimitiveResult refreshedKsResult = refreshResult != null ?
-                                    refreshResult :
-                                    new PrimitiveResult(ErrorElement.SessionError.addMessage(" FAILED TO RECOVER SESSION!!"));
+                                refreshResult :
+                                new PrimitiveResult(ErrorElement.SessionError.addMessage(" FAILED TO RECOVER SESSION!!"));
 
                         onSessionRefreshTaskResults(refreshedKsResult);
                     }
