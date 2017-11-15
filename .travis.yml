@@ -22,6 +22,7 @@ notifications:
   email:
     recipients:
       - noam.tamim@kaltura.com
-      - tehila.rozin@kaltura.com
+      - gilad.nadav@kaltura.com
+      - Anton.Afanasiev@kaltura.com
     on_success: always
     on_failure: always
