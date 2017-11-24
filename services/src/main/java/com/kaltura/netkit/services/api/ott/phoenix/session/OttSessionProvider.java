@@ -67,13 +67,13 @@ public class OttSessionProvider extends BaseSessionProvider {
 
         @Override
         public Boolean call() throws Exception {
-            if(refreshToken == null){
+            if (refreshToken == null) {
                 Log.d(TAG, "refreshToken is not available, can't activate refresh");
                 onSessionRefreshTaskResults(new PrimitiveResult(ErrorElement.SessionError.addMessage(" FAILED TO RECOVER SESSION!!")));
                 return false;
             }
 
-            if(refreshInProgress.get()){
+            if (refreshInProgress.get()) {
                 Log.d(TAG, "refresh already in progress");
                 return false;
             }
@@ -81,7 +81,7 @@ public class OttSessionProvider extends BaseSessionProvider {
             Log.d(TAG, "start running refresh token");
 
 
-            if(refreshTaskFurure != null && refreshTaskFurure.isCancelled()){
+            if (refreshTaskFurure != null && refreshTaskFurure.isCancelled()) {
                 refreshTaskFurure = null;
                 Log.d(TAG, "refresh operation got canceled");
                 return false;
@@ -95,13 +95,13 @@ public class OttSessionProvider extends BaseSessionProvider {
     };
 
     private void onSessionRefreshTaskResults(PrimitiveResult result) {
-        if(sessionRecoveryCallback != null){
+        if (sessionRecoveryCallback != null) {
             sessionRecoveryCallback.onComplete(result);
             sessionRecoveryCallback = null;
         }
 
-        if(sessionRefreshListener != null ){
-            sessionRefreshListener.onComplete(result.error == null? result.getResult() : null);
+        if (sessionRefreshListener != null) {
+            sessionRefreshListener.onComplete(result.error == null ? result.getResult() : null);
         }
     }
     //endregion
@@ -121,10 +121,11 @@ public class OttSessionProvider extends BaseSessionProvider {
 
     /**
      * sets a listener to listen to auto session refreshes
+     *
      * @param listener
      * @return
      */
-    public OttSessionProvider setRefreshListener(OnCompletion<String> listener){
+    public OttSessionProvider setRefreshListener(OnCompletion<String> listener) {
         this.sessionRefreshListener = listener;
         return this;
     }
@@ -177,6 +178,28 @@ public class OttSessionProvider extends BaseSessionProvider {
         APIOkRequestsExecutor.getSingleton().queue(multiRequest.build());
     }
 
+    /**
+     * starts new PIP user session
+     * login and get the session expiration for refresh purposes.
+     *
+     * @param username
+     * @param password
+     * @param udid
+     * @param completion
+     */
+    public void startPipSession(@NonNull String username, @NonNull String password, @Nullable String udid, final OnCompletion<PrimitiveResult> completion) {
+        this.sessionUdid = udid;
+
+        MultiRequestBuilder multiRequest = PhoenixService.getMultirequest(apiBaseUrl, null);
+        multiRequest.add(OttUserService.pipUserLogin(apiBaseUrl, partnerId, username, password, udid).
+                completion(new OnRequestCompletion() {
+                    @Override
+                    public void onComplete(ResponseElement response) {
+                        handleStartSession(response, completion);
+                    }
+                }));
+        APIOkRequestsExecutor.getSingleton().queue(multiRequest.build());
+    }
 
     /**
      * starts social network related session
@@ -204,6 +227,7 @@ public class OttSessionProvider extends BaseSessionProvider {
 
     /**
      * switch to another user in household
+     *
      * @param userId
      * @param completion
      */
@@ -212,7 +236,7 @@ public class OttSessionProvider extends BaseSessionProvider {
         getSessionToken(new OnCompletion<PrimitiveResult>() {
             @Override
             public void onComplete(PrimitiveResult response) {
-                if(response.error == null) { // in case the session checked for expiry and ready to use:
+                if (response.error == null) { // in case the session checked for expiry and ready to use:
                     MultiRequestBuilder multiRequest = PhoenixService.getMultirequest(apiBaseUrl, null);
                     multiRequest.add(PhoenixSessionService.switchUser(apiBaseUrl, response.getResult(), userId),
                             PhoenixSessionService.get(apiBaseUrl, "{1:result:ks}")).
@@ -239,6 +263,7 @@ public class OttSessionProvider extends BaseSessionProvider {
      * handles start session response.
      * if session was established update members and pass "ks" on the callback
      * if failed pass {@link ErrorElement#SessionError}
+     *
      * @param response
      * @param completion
      */
@@ -251,7 +276,7 @@ public class OttSessionProvider extends BaseSessionProvider {
             List<BaseResult> responses = PhoenixParser.parse(response.getResponse()); // parses KalturaLoginResponse, KalturaSession
 
             if (responses.get(0).error != null) { //!- failed to login
-                Log.d(TAG, "handleStartSession: first response failure: "+responses.get(0).error);
+                Log.d(TAG, "handleStartSession: first response failure: " + responses.get(0).error);
 
                 //returns ErrorHelper error if recognizes code otherwise return SessionError
                 error = PhoenixErrorHelper.getErrorElement(responses.get(0).error.getCode(), responses.get(0).error.getMessage(), ErrorElement.SessionError);
@@ -271,7 +296,7 @@ public class OttSessionProvider extends BaseSessionProvider {
                         completion.onComplete(new PrimitiveResult(session.getKs()));
                     }
                 } else {
-                    Log.d(TAG, "handleStartSession: second response failure: "+responses.get(1).error);
+                    Log.d(TAG, "handleStartSession: second response failure: " + responses.get(1).error);
 
                     error = ErrorElement.SessionError;
                 }
@@ -282,7 +307,7 @@ public class OttSessionProvider extends BaseSessionProvider {
         }
 
         if (error != null) {
-            if(clearOnError) { // in case of switch user failure - session of current user should not be cleared - still active
+            if (clearOnError) { // in case of switch user failure - session of current user should not be cleared - still active
                 clearSession(); //clears current saved data - app can try renewSession with the current credentials. or endSession/startSession
             }
             if (completion != null) {
@@ -294,12 +319,13 @@ public class OttSessionProvider extends BaseSessionProvider {
     /**
      * try to preserve given session token. refresh of token is done immediate by that check if session
      * is still valid and get a new refreshToken and expiry time.
+     *
      * @param ks
      * @param refreshToken
      * @param userId
      * @param udid
      */
-    public void maintainSession(@NonNull String ks, String refreshToken, String userId, String udid, OnCompletion<PrimitiveResult> sessionRecoveryCallback){
+    public void maintainSession(@NonNull String ks, String refreshToken, String userId, String udid, OnCompletion<PrimitiveResult> sessionRecoveryCallback) {
         //this.sessionParams = new OttSessionParams().setUdid(udid);
         this.sessionUdid = udid;
 
@@ -316,7 +342,7 @@ public class OttSessionProvider extends BaseSessionProvider {
      * Ends current active session. if it's a {@link BaseSessionProvider.UserSessionType#User} session
      * logout, if {@link BaseSessionProvider.UserSessionType#Anonymous} will return, since
      * logout on anonymous session doesn't make the session invalid.
-     *
+     * <p>
      * If logout was activated, session params are cleared.
      */
     public void endSession(final OnCompletion<BaseResult> completion) {
@@ -334,7 +360,7 @@ public class OttSessionProvider extends BaseSessionProvider {
             getSessionToken(new OnCompletion<PrimitiveResult>() {
                 @Override
                 public void onComplete(PrimitiveResult response) {
-                    if(response.error == null) { // in case the session checked for expiry and ready to use:
+                    if (response.error == null) { // in case the session checked for expiry and ready to use:
 
                         APIOkRequestsExecutor.getSingleton().queue(OttUserService.logout(apiBaseUrl, response.getResult(), sessionUdid)
                                 .completion(new OnRequestCompletion() {
@@ -434,8 +460,8 @@ public class OttSessionProvider extends BaseSessionProvider {
                         }
 
                         final PrimitiveResult refreshedKsResult = refreshResult != null ?
-                                    refreshResult :
-                                    new PrimitiveResult(ErrorElement.SessionError.addMessage(" FAILED TO RECOVER SESSION!!"));
+                                refreshResult :
+                                new PrimitiveResult(ErrorElement.SessionError.addMessage(" FAILED TO RECOVER SESSION!!"));
 
                         onSessionRefreshTaskResults(refreshedKsResult);
                     }
@@ -453,9 +479,9 @@ public class OttSessionProvider extends BaseSessionProvider {
     }
 
     private void cancelCurrentRefreshTask() {
-        Log.d(TAG, "cancelCurrentRefreshTask: Thread - "+Thread.currentThread().getId());
+        Log.d(TAG, "cancelCurrentRefreshTask: Thread - " + Thread.currentThread().getId());
 
-        if(refreshTaskFurure != null && !refreshTaskFurure.isDone()){
+        if (refreshTaskFurure != null && !refreshTaskFurure.isDone()) {
             refreshTaskFurure.cancel(true);
         }
         refreshTaskFurure = null;
@@ -473,7 +499,7 @@ public class OttSessionProvider extends BaseSessionProvider {
     @Override
     protected void setSession(String sessionToken, long expiry, String userId) {
         super.setSession(sessionToken, expiry, userId);
-        if(expiry != BaseSessionProvider.Unset) {
+        if (expiry != BaseSessionProvider.Unset) {
             updateRefreshDelta(expiry);
 
         } else {
@@ -488,12 +514,13 @@ public class OttSessionProvider extends BaseSessionProvider {
 
     /**
      * encrypt session info for storage purposes
+     *
      * @return
      */
-    public String encryptSession(){
+    public String encryptSession() {
 
         String sessionToken = getSessionToken();
-        if(sessionToken == null){
+        if (sessionToken == null) {
             return null;
         }
 
@@ -505,12 +532,13 @@ public class OttSessionProvider extends BaseSessionProvider {
 
     /**
      * maintain session recovered from encrypt session info.
+     *
      * @param encryptSession
      */
-    public boolean recoverSession(String encryptSession, OnCompletion<PrimitiveResult> sessionRecoveryCallback){
+    public boolean recoverSession(String encryptSession, OnCompletion<PrimitiveResult> sessionRecoveryCallback) {
         String decrypt = new String(Base64.decode(encryptSession, Base64.NO_WRAP));
         String[] data = decrypt.split(" ~~ ");
-        if(data.length < 2){
+        if (data.length < 2) {
             return false;
         }
         maintainSession(data[KsParam], data[RefreshTokenParam], DummyUserId, data.length >= 3 && !data[UdidParam].equals("null") ? data[UdidParam] : null, sessionRecoveryCallback);

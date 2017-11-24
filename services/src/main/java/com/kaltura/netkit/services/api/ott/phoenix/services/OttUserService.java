@@ -35,6 +35,32 @@ public class OttUserService extends PhoenixService {
                 .params(params);
     }
 
+    public static PhoenixRequestBuilder pipUserLogin(String baseUrl, int partnerId, String username, String password, @Nullable String udid){
+        JsonObject params = new JsonObject();
+        params.addProperty("partnerId", partnerId);
+        params.addProperty("username", username);
+        params.addProperty("password", password);
+        if(udid != null){
+            params.addProperty("udid", udid);
+        }
+
+        JsonObject extraParams = new JsonObject();
+        JsonObject redirecturl = new JsonObject();
+        redirecturl.addProperty("description", "");
+        redirecturl.addProperty("objectType", "KalturaStringValue");
+        redirecturl.addProperty("value", "https://kocowa-stg.ott.kaltura.com/pip/response&app=100706a");
+        extraParams.add("redirecturl", redirecturl);
+        extraParams.add("extra_params", extraParams);
+
+        return new PhoenixRequestBuilder()
+                .service("ottUser")
+                .action("login")
+                .method("POST")
+                .url(baseUrl)
+                .tag("ottuser-login")
+                .params(params);
+    }
+
     public static PhoenixRequestBuilder anonymousLogin(String baseUrl, int partnerId, @Nullable String udid){
         JsonObject params = new JsonObject();
         params.addProperty("partnerId", partnerId);
