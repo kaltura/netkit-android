@@ -50,14 +50,14 @@ public class OttUserService extends PhoenixService {
         redirecturl.addProperty("objectType", "KalturaStringValue");
         redirecturl.addProperty("value", "https://kocowa-stg.ott.kaltura.com/pip/response&app=100706a");
         extraParams.add("redirecturl", redirecturl);
-        extraParams.add("extra_params", extraParams);
+        params.add("extra_params", extraParams);
 
         return new PhoenixRequestBuilder()
                 .service("ottUser")
                 .action("login")
                 .method("POST")
                 .url(baseUrl)
-                .tag("ottuser-login")
+                .tag("ottuser-pip-login")
                 .params(params);
     }
 
