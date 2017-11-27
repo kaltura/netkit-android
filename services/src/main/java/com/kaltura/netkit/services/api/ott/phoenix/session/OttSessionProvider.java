@@ -188,23 +188,21 @@ public class OttSessionProvider extends BaseSessionProvider {
      * @param completion
      */
     public void startPipSession(@NonNull String username, @NonNull String password, @Nullable String udid, final OnCompletion<PrimitiveResult> completion) {
+        //1. login pip user
+        //2. get session data: expiration time
+
         this.sessionUdid = udid;
 
-//        MultiRequestBuilder multiRequest = PhoenixService.getMultirequest(apiBaseUrl, null);
-//        multiRequest.add(OttUserService.pipUserLogin(apiBaseUrl, partnerId, username, password, udid).
-//                completion(new OnRequestCompletion() {
-//                    @Override
-//                    public void onComplete(ResponseElement response) {
-//                        handleStartSession(response, completion);
-//                    }
-//                }));
-        APIOkRequestsExecutor.getSingleton().queue(OttUserService.pipUserLogin(apiBaseUrl, partnerId, username, password, udid).
+        MultiRequestBuilder multiRequest = PhoenixService.getMultirequest(apiBaseUrl, null);
+        multiRequest.add(OttUserService.pipUserLogin(apiBaseUrl, partnerId, username, password, udid),
+                PhoenixSessionService.get(apiBaseUrl, "{1:result:loginSession:ks}")).
                 completion(new OnRequestCompletion() {
                     @Override
                     public void onComplete(ResponseElement response) {
                         handleStartSession(response, completion);
                     }
-                }).build());
+                });
+        APIOkRequestsExecutor.getSingleton().queue(multiRequest.build());
     }
 
     /**
