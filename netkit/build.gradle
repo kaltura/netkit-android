@@ -47,12 +47,11 @@ dependencies {
 
     // Tests
     testImplementation 'junit:junit:4.12'
-  //  testCompile 'org.hamcrest:hamcrest-library:1.3'
+    //  testCompile 'org.hamcrest:hamcrest-library:1.3'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
 }
 
 repositories {
-    maven {
-        google()
-    }
+    google()
+    maven { url "https://jitpack.io" }
 }
