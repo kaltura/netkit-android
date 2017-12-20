@@ -4,13 +4,16 @@ import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.BadRequestErrorCode;
 import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.CanceledRequestCode;
 import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.ConnectionErrorCode;
 import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.GeneralErrorCode;
+import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.GeoBlockErrorCode;
 import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.InternalServerErrorCode;
 import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.LoadErrorCode;
+import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.NoEntitlementsErrorCode;
 import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.NotFoundCode;
 import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.ServiceUnavailableErrorCode;
 import static com.kaltura.netkit.utils.ErrorElement.ErrorCode.SessionErrorCode;
@@ -22,8 +25,9 @@ public class ErrorElement {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({BadRequestErrorCode, NotFoundCode, ConnectionErrorCode, InternalServerErrorCode,
-            ServiceUnavailableErrorCode, LoadErrorCode, CanceledRequestCode, SessionErrorCode, GeneralErrorCode})
-    public @interface ErrorCode{
+            ServiceUnavailableErrorCode, LoadErrorCode, CanceledRequestCode, SessionErrorCode, GeneralErrorCode,
+            GeoBlockErrorCode, NoEntitlementsErrorCode})
+    public @interface ErrorCode {
         int BadRequestErrorCode = 400;
         int NotFoundCode = 404;
         int ConnectionErrorCode = 408;
@@ -35,6 +39,9 @@ public class ErrorElement {
 
         int SessionErrorCode = 601;
         int GeneralErrorCode = 666;
+
+        int GeoBlockErrorCode = 701;
+        int NoEntitlementsErrorCode = 702;
     }
 
     public static ErrorElement GeneralError = new ErrorElement("GeneralError", "Something went wrong", GeneralErrorCode);
@@ -45,11 +52,14 @@ public class ErrorElement {
     public static ErrorElement ConnectionError = new ErrorElement("ConnectionError", "Failed to connect to source", ConnectionErrorCode);
     public static ErrorElement BadRequestError = new ErrorElement("BadRequestError", "Invalid or missing request params", BadRequestErrorCode);
     public static ErrorElement SessionError = new ErrorElement("SessionError", "Failed to obtain session", SessionErrorCode);
+    public static ErrorElement GeoBlockError = new ErrorElement("GeoBlockError", "GeoBlock", GeoBlockErrorCode);
+    public static ErrorElement NoEntitlementsError = new ErrorElement("NoEntitlementsError", "NoEntitlements", NoEntitlementsErrorCode);
 
     public String name;
     private String message;
     private String code;
     protected Object extra;
+    protected List<ErrorElementDetails> args;
 
     public ErrorElement(String name, String message, int code) {
         this(message, code);
@@ -94,6 +104,15 @@ public class ErrorElement {
         return code;
     }
 
+    public String getExternalCode() {
+        for (ErrorElementDetails details : args) {
+            if (details.name.equals("externalCode")) {
+                return details.value;
+            }
+        }
+        return "";
+    }
+
     public Object getExtra() {
         return extra;
     }
@@ -124,10 +143,16 @@ public class ErrorElement {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        if(name != null){
+        if (name != null) {
             builder.append("Error: ").append(name).append("; ");
         }
         builder.append("code:").append(code).append(", Message:").append(message);
         return builder.toString();
+    }
+
+    private class ErrorElementDetails {
+        private String name;
+        private String value;
+        private String objectType;
     }
 }

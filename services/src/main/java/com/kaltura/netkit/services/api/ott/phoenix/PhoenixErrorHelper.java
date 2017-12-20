@@ -12,29 +12,30 @@ public class PhoenixErrorHelper {
 
     /**
      * in case specific error codes should be parsed to predefined errors.
+     *
      * @param code
      * @param message
      * @return
      */
-    public static ErrorElement getErrorElement(String code, String message){
-        ErrorElement errorElement = getDefinedErrorElement(code, message);
-        if(errorElement == null){
+    public static ErrorElement getErrorElement(String code, String message, String externalCode) {
+        ErrorElement errorElement = getDefinedErrorElement(code, message, externalCode);
+        if (errorElement == null) {
             errorElement = new ErrorElement(code, message);
         }
         return errorElement;
     }
 
-    public static ErrorElement getErrorElement(String code, String message, ErrorElement fallback){
-        ErrorElement errorElement = getDefinedErrorElement(code, message);
-        if(errorElement == null){
+    public static ErrorElement getErrorElement(String code, String message, String externalCode, ErrorElement fallback) {
+        ErrorElement errorElement = getDefinedErrorElement(code, message, externalCode);
+        if (errorElement == null) {
             return fallback != null ? fallback : new ErrorElement(code, message);
         }
         return errorElement;
     }
 
-    public static ErrorElement getErrorElement(ErrorElement error){
-        ErrorElement errorElement = getDefinedErrorElement(error.getCode(), error.getMessage());
-        if(errorElement == null){
+    public static ErrorElement getErrorElement(ErrorElement error) {
+        ErrorElement errorElement = getDefinedErrorElement(error.getCode(), error.getMessage(), error.getExternalCode());
+        if (errorElement == null) {
             return error;
         }
         return errorElement;
@@ -48,10 +49,19 @@ public class PhoenixErrorHelper {
      * @param message
      * @return
      */
-    private static ErrorElement getDefinedErrorElement(String code, String message) {
-        switch (code){
+    private static ErrorElement getDefinedErrorElement(String code, String message, String externalCode) {
+        switch (code) {
             case "2016":
                 return new ErrorElement(message, code);
+
+            case "500063": {
+                switch (externalCode) {
+                    case "10001":
+                        return ErrorElement.NoEntitlementsError;
+                    case "10002":
+                        return ErrorElement.GeoBlockError;
+                }
+            }
 
             case "500016":
                 return ErrorElement.SessionError.message("session token has been expired");
