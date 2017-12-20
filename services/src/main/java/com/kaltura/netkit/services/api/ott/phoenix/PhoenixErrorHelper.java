@@ -25,8 +25,24 @@ public class PhoenixErrorHelper {
         return errorElement;
     }
 
+    public static ErrorElement getErrorElement(String code, String message) {
+        ErrorElement errorElement = getDefinedErrorElement(code, message, "");
+        if (errorElement == null) {
+            errorElement = new ErrorElement(code, message);
+        }
+        return errorElement;
+    }
+
     public static ErrorElement getErrorElement(String code, String message, String externalCode, ErrorElement fallback) {
         ErrorElement errorElement = getDefinedErrorElement(code, message, externalCode);
+        if (errorElement == null) {
+            return fallback != null ? fallback : new ErrorElement(code, message);
+        }
+        return errorElement;
+    }
+
+    public static ErrorElement getErrorElement(String code, String message, ErrorElement fallback) {
+        ErrorElement errorElement = getDefinedErrorElement(code, message, "");
         if (errorElement == null) {
             return fallback != null ? fallback : new ErrorElement(code, message);
         }
