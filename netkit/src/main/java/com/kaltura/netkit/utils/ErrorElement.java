@@ -105,12 +105,14 @@ public class ErrorElement {
     }
 
     public String getExternalCode() {
+        String result = "";
         for (ErrorElementDetails details : args) {
             if (details.name.equals("externalCode")) {
-                return details.value;
+                result = details.value;
+                break;
             }
         }
-        return "";
+        return result;
     }
 
     public Object getExtra() {
