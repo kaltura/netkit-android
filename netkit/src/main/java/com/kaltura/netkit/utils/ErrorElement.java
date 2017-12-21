@@ -105,7 +105,7 @@ public class ErrorElement {
     }
 
     public String getExternalCode() {
-        String result = "";
+        String result = "x";
         for (ErrorElementDetails details : args) {
             if (details.name.equals("externalCode")) {
                 result = details.value;
