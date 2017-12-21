@@ -283,9 +283,7 @@ public class OttSessionProvider extends BaseSessionProvider {
                 Log.d(TAG, "handleStartSession: first response failure: " + responses.get(0).error);
 
                 //returns ErrorHelper error if recognizes code otherwise return SessionError
-                error = PhoenixErrorHelper.getErrorElement(responses.get(0).error.getCode(), responses.get(0).error.getMessage(),
-                        responses.get(0).error.getExternalCode(), ErrorElement.SessionError);
-
+                error = PhoenixErrorHelper.getErrorElement(responses.get(0).error.getCode(), responses.get(0).error.getMessage(), ErrorElement.SessionError);
             } else {
                 refreshToken = responses.get(0) instanceof KalturaLoginResponse ? ((KalturaLoginResponse) responses.get(0)).getLoginSession().getRefreshToken() :
                         ((KalturaLoginSession) responses.get(0)).getRefreshToken();

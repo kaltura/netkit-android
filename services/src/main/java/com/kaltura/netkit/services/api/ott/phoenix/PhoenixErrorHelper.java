@@ -17,32 +17,16 @@ public class PhoenixErrorHelper {
      * @param message
      * @return
      */
-    public static ErrorElement getErrorElement(String code, String message, String externalCode) {
-        ErrorElement errorElement = getDefinedErrorElement(code, message, externalCode);
-        if (errorElement == null) {
-            errorElement = new ErrorElement(code, message);
-        }
-        return errorElement;
-    }
-
     public static ErrorElement getErrorElement(String code, String message) {
-        ErrorElement errorElement = getDefinedErrorElement(code, message, "");
+        ErrorElement errorElement = getDefinedErrorElement(code, message);
         if (errorElement == null) {
             errorElement = new ErrorElement(code, message);
-        }
-        return errorElement;
-    }
-
-    public static ErrorElement getErrorElement(String code, String message, String externalCode, ErrorElement fallback) {
-        ErrorElement errorElement = getDefinedErrorElement(code, message, externalCode);
-        if (errorElement == null) {
-            return fallback != null ? fallback : new ErrorElement(code, message);
         }
         return errorElement;
     }
 
     public static ErrorElement getErrorElement(String code, String message, ErrorElement fallback) {
-        ErrorElement errorElement = getDefinedErrorElement(code, message, "");
+        ErrorElement errorElement = getDefinedErrorElement(code, message);
         if (errorElement == null) {
             return fallback != null ? fallback : new ErrorElement(code, message);
         }
@@ -50,7 +34,7 @@ public class PhoenixErrorHelper {
     }
 
     public static ErrorElement getErrorElement(ErrorElement error) {
-        ErrorElement errorElement = getDefinedErrorElement(error.getCode(), error.getMessage(), error.getExternalCode());
+        ErrorElement errorElement = getDefinedErrorElement(error.getCode(), error.getMessage());
         if (errorElement == null) {
             return error;
         }
@@ -65,17 +49,20 @@ public class PhoenixErrorHelper {
      * @param message
      * @return
      */
-    private static ErrorElement getDefinedErrorElement(String code, String message, String externalCode) {
+    private static ErrorElement getDefinedErrorElement(String code, String message) {
         switch (code) {
             case "2016":
                 return new ErrorElement(message, code);
 
             case "500063": {
+                int startIndexExternalCode = message.indexOf("externalCode: [");
+                int endIndexExternalCode = message.indexOf("]", startIndexExternalCode);
+                String externalCode = message.substring(startIndexExternalCode, endIndexExternalCode);
                 switch (externalCode) {
                     case "10001":
-                        return ErrorElement.NoEntitlementsError;
+                        return ErrorElement.SessionError.message("NoEntitlements");
                     case "10002":
-                        return ErrorElement.GeoBlockError;
+                        return ErrorElement.SessionError.message("GeoBlock");
                 }
             }
 
