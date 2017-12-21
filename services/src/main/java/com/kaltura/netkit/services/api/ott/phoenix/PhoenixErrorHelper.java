@@ -55,7 +55,7 @@ public class PhoenixErrorHelper {
                 return new ErrorElement(message, code);
 
             case "500063": {
-                int startIndexExternalCode = message.indexOf("externalCode: [");
+                int startIndexExternalCode = "externalCode: [".length();
                 int endIndexExternalCode = message.indexOf("]", startIndexExternalCode);
                 String externalCode = message.substring(startIndexExternalCode, endIndexExternalCode);
                 switch (externalCode) {
