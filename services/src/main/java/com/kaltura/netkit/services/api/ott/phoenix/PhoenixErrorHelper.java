@@ -60,9 +60,9 @@ public class PhoenixErrorHelper {
                 String externalCode = message.substring(startIndexExternalCode, endIndexExternalCode);
                 switch (externalCode) {
                     case "10001":
-                        return ErrorElement.SessionError.message("NoEntitlements");
+                        return new ErrorElement("NoEntitlements", 10001);
                     case "10002":
-                        return ErrorElement.SessionError.message("GeoBlock");
+                        return new ErrorElement("GeoBlocked", 10002);
                 }
             }
 
