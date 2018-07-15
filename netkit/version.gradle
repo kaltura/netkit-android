@@ -1,6 +1,6 @@
 
 // PlayKit Library Version
-ext.netkitVersion = '1.0.9'
+ext.netkitVersion = '1.0.10'
 
 
 // Append short commit hash to dev builds, i.e. "dev.a1b2c3d"
