@@ -1,11 +1,7 @@
 
 // NetKit Library Version
-ext.netkitVersion = '1.1.0'
-
-
-
-
-
+ext.netkitVersion = 'dev'
+//ext.netkitVersion = '1.2.0'
 
 
 // Append short commit hash to dev builds, i.e. "dev.a1b2c3d"
