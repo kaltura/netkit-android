@@ -1,6 +1,6 @@
 package com.kaltura.netkit.services.api.ovp.session;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.JsonElement;

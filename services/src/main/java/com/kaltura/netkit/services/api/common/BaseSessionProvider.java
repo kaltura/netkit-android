@@ -1,7 +1,6 @@
 package com.kaltura.netkit.services.api.common;
 
-import android.support.annotation.StringDef;
-
+import androidx.annotation.StringDef;
 import com.kaltura.netkit.utils.SessionProvider;
 
 import java.lang.annotation.Retention;
