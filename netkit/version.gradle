@@ -16,12 +16,12 @@ try {
     apply plugin: 'bintray-release'
 
     publish {
-        artifactId = 'netkit-core'
-        desc = 'NetKit: Kaltura server connection network SDK'
+        artifactId = 'netkit-services'
+        description = 'NetKit: Kaltura server connection network SDK'
         repoName = 'android'
         userOrg = 'kaltura'
         groupId = 'com.kaltura.netkit'
-        publishVersion = netkitVersion
+        version = netkitVersion
         autoPublish = true
         licences = ['AGPL-3.0']
     }
