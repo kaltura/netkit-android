@@ -17,11 +17,11 @@ try {
 
     publish {
         artifactId = 'netkit-core'
-        description = 'NetKit: Kaltura server connection network SDK'
+        desc = 'NetKit: Kaltura server connection network SDK'
         repoName = 'android'
         userOrg = 'kaltura'
         groupId = 'com.kaltura.netkit'
-        version = netkitVersion
+        publishVersion = netkitVersion
         autoPublish = true
         licences = ['AGPL-3.0']
     }
