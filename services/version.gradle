@@ -1,6 +1,6 @@
 
 // NetKit Library Version
-ext.netkitVersion = '1.1.0'
+ext.netkitVersion = 'dev'
 
 
 
