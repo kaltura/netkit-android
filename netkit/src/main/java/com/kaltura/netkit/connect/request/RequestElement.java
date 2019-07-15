@@ -1,7 +1,7 @@
 package com.kaltura.netkit.connect.request;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.kaltura.netkit.connect.response.ResponseElement;import java.util.Map;
 
@@ -19,7 +19,8 @@ public interface RequestElement {
 
     String getTag();
 
-    @NonNull Map<String, String> getHeaders();
+    @NonNull
+    Map<String, String> getHeaders();
 
     String getId();
 

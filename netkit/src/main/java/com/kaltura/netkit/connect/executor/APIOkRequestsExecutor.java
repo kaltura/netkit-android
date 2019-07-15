@@ -1,8 +1,9 @@
 package com.kaltura.netkit.connect.executor;
 
 
-import android.support.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.kaltura.netkit.connect.request.ExecutedRequest;
 import com.kaltura.netkit.connect.request.RequestConfiguration;

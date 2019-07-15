@@ -1,6 +1,6 @@
 package com.kaltura.netkit.services.api.ovp;
 
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 import java.lang.annotation.Retention;
 
 import static com.kaltura.netkit.services.api.ovp.APIDefines.ResponseProfileType.ExcludeFields;

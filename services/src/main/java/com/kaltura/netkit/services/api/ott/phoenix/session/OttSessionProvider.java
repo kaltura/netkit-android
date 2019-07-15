@@ -1,7 +1,8 @@
 package com.kaltura.netkit.services.api.ott.phoenix.session;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import android.util.Base64;
 import android.util.Log;
 

@@ -1,9 +1,5 @@
 package com.kaltura.netkit.services.api.ott.phoenix.services;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
-
 import com.google.gson.JsonObject;
 import com.kaltura.netkit.services.api.ott.phoenix.PhoenixRequestBuilder;
 

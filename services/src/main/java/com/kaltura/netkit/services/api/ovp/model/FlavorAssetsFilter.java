@@ -1,7 +1,7 @@
 package com.kaltura.netkit.services.api.ovp.model;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;

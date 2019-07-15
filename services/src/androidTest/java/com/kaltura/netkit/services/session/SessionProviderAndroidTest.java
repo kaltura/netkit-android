@@ -1,7 +1,8 @@
 package com.kaltura.netkit.services.session;
 
-import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
+
+import androidx.test.runner.AndroidJUnit4;
 
 import com.kaltura.netkit.connect.executor.APIOkRequestsExecutor;
 import com.kaltura.netkit.connect.response.BaseResult;
