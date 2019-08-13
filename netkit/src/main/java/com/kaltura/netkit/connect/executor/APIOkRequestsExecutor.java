@@ -70,6 +70,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     //private String mEndPoint = "http://52.210.223.65/8080/v4_0/api_v3";
 
     private OkHttpClient mOkClient;
+    private static OkHttpClient.Builder mClientBuilder;
     private boolean addSig;
     private IdFactory idFactory = new RequestIdFactory(); // default
     private boolean enableLogs = true;
@@ -118,6 +119,9 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     @NonNull
     private OkHttpClient.Builder createOkClientBuilder() {
+        if (mClientBuilder != null) {
+            return mClientBuilder;
+        }
         return new OkHttpClient.Builder().connectionPool(new ConnectionPool()); // default connection pool - holds 5 connections up to 5 minutes idle time
     }
 
@@ -271,6 +275,10 @@ public class APIOkRequestsExecutor implements RequestQueue {
         return mOkClient == null || mOkClient.dispatcher().queuedCallsCount() == 0;
     }
 
+    public static void setClientBuilder(OkHttpClient.Builder clientBuilder) {
+        mClientBuilder = clientBuilder;
+    }
+
     private ResponseElement onGotResponse(Response response, RequestElement action) {
         String requestId = getRequestId(response);
 
@@ -344,5 +352,4 @@ public class APIOkRequestsExecutor implements RequestQueue {
             return "did not work";
         }
     }
-
 }
