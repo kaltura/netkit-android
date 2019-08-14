@@ -66,16 +66,15 @@ public class APIOkRequestsExecutor implements RequestQueue {
         }
     };
 
-
-    //private String mEndPoint = "http://52.210.223.65/8080/v4_0/api_v3";
-
-    private OkHttpClient mOkClient;
+    private static APIOkRequestsExecutor self;
     private static OkHttpClient.Builder mClientBuilder;
+    
+    private OkHttpClient mOkClient;
     private boolean addSig;
     private IdFactory idFactory = new RequestIdFactory(); // default
     private boolean enableLogs = true;
 
-    private static APIOkRequestsExecutor self;
+    
 
     public static APIOkRequestsExecutor getSingleton() {
         if (self == null) {
