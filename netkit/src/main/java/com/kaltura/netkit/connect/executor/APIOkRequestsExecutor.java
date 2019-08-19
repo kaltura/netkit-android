@@ -1,6 +1,8 @@
 package com.kaltura.netkit.connect.executor;
 
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -13,6 +15,9 @@ import com.kaltura.netkit.connect.response.ResponseElement;
 import com.kaltura.netkit.utils.ErrorElement;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,14 +26,18 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
+import okhttp3.EventListener;
 import okhttp3.FormBody;
 import okhttp3.Headers;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import okio.Buffer;
 
 /**
@@ -42,6 +51,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     public static final String TAG = "APIOkRequestsExecutor";
+    public static RertryPolicy rertryPolicy = new RertryPolicy();
+
     static final MediaType JSON_MediaType = MediaType.parse("application/json");
 
     private RequestConfiguration defaultConfiguration = new RequestConfiguration() {
@@ -62,7 +73,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
         @Override
         public int getRetry() {
-            return 2;
+            return 3;
         }
     };
 
@@ -122,9 +133,37 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     private OkHttpClient.Builder configClient(OkHttpClient.Builder builder, RequestConfiguration config) {
+
         builder.followRedirects(true).connectTimeout(config.getConnectTimeout(), TimeUnit.MILLISECONDS)
                 .readTimeout(config.getReadTimeout(), TimeUnit.MILLISECONDS)
                 .writeTimeout(config.getWriteTimeout(), TimeUnit.MILLISECONDS)
+                .eventListener(new EventListener() {
+                    @Override
+                    public void connectStart(Call call, InetSocketAddress inetSocketAddress, Proxy proxy) {
+                        String msg = "connectStart ";
+                        if (call != null && call.request() != null) {
+                            msg += call.request().url();
+                        }
+                        Log.d(TAG, msg);
+                        super.connectStart(call, inetSocketAddress, proxy);
+                    }
+
+                    @Override
+                    public void connectEnd(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, Protocol protocol) {
+                        Log.d(TAG, "connectEnd");
+                        super.connectEnd(call, inetSocketAddress, proxy, protocol);
+                    }
+
+                    @Override
+                    public void connectFailed(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, Protocol protocol, IOException ioe) {
+                        String msg = "connectFailed ";
+                        if (ioe != null) {
+                            msg += ioe.getMessage();
+                        }
+                        Log.e(TAG, msg);
+                        super.connectFailed(call, inetSocketAddress, proxy, protocol, ioe);
+                    }
+                })
                 .retryOnConnectionFailure(config.getRetry() > 0);
 
         return builder;
@@ -158,12 +197,13 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     @Override
-    public String queue(final RequestElement requestElement) {
+    public String queue(final RequestElement requestElement, final int retryCount) {
         final Request request = buildRestRequest(requestElement, BodyBuilder.Default);
-        return queue(request, requestElement);
+        return queue(request, requestElement, retryCount);
     }
 
-    private String queue(final Request request, final RequestElement action) {
+    private String queue(final Request request, final RequestElement action, final int retryCount) {
+        Log.d(TAG, "XXX Start queue");
 
         try {
             Call call = getOkClient(action.config()).newCall(request);
@@ -177,13 +217,22 @@ public class APIOkRequestsExecutor implements RequestQueue {
                     }
                     // handle failures: create response from exception
                     action.onComplete(new ExecutedRequest().error(e).success(false));
-                    Log.v(TAG, "enqueued request finished with failure, results passed to callback");
+                    Log.e(TAG, "enqueued request finished with failure, results passed to callback");
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (call.isCanceled()) {
 //                        logger.warn("call "+call.request().tag()+" was canceled. not passing results");
+                        return;
+                    }
+
+                    if (response.code() >= HttpURLConnection.HTTP_BAD_REQUEST && retryCount > 0) {
+                        Log.d(TAG, "enqueued request finished with failure, retryCount = " + retryCount + " response = " + response.message());
+                        new Handler(Looper.getMainLooper()).postDelayed (() -> {
+                            Log.v(TAG, "queue delay = " + rertryPolicy.getDelayMS(retryCount));
+                            queue(request, action, retryCount - 1);
+                        }, rertryPolicy.getDelayMS(retryCount));
                         return;
                     }
 
@@ -344,5 +393,4 @@ public class APIOkRequestsExecutor implements RequestQueue {
             return "did not work";
         }
     }
-
 }

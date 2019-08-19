@@ -9,7 +9,7 @@ public interface RequestQueue {
 
     void setDefaultConfiguration(RequestConfiguration config);
 
-    String queue(RequestElement request);
+    String queue(RequestElement request, int retryCount);
 
     ResponseElement execute(RequestElement request);
 
