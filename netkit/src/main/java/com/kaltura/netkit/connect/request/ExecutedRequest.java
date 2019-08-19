@@ -8,8 +8,15 @@ public class ExecutedRequest implements ResponseElement {
     String requestId;
     int code = -1;
     String response = "";
+    Severity severity = Severity.Fatal;
     boolean isSuccess = false;
+
     ErrorElement error = null;
+
+    public enum Severity {
+        Recoverable,
+        Fatal;
+    }
 
     public ExecutedRequest requestId(String id) {
         this.requestId = id;
@@ -33,6 +40,13 @@ public class ExecutedRequest implements ResponseElement {
 
     public ExecutedRequest error(ErrorElement error) {
         this.error = error;
+        return this;
+    }
+
+    public ExecutedRequest severity(Severity severity) {
+        if (severity != null) {
+            this.severity = severity;
+        }
         return this;
     }
 
