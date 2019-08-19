@@ -200,8 +200,16 @@ public class APIOkRequestsExecutor implements RequestQueue {
         return queue(request, requestElement, retryCount);
     }
 
+    @Override
+    public String queue(final RequestElement requestElement) {
+        final Request request = buildRestRequest(requestElement, BodyBuilder.Default);
+        int numRetries = (defaultConfiguration != null) ? defaultConfiguration.getRetry() : 3;
+        return queue(request, requestElement, numRetries);
+    }
+
+
     private String queue(final Request request, final RequestElement action, final int retryCount) {
-        Log.d(TAG, "XXX Start queue");
+        Log.d(TAG, "Start queue");
 
         try {
             Call call = getOkClient(action.config()).newCall(request);
