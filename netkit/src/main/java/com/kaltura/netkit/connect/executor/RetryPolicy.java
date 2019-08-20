@@ -1,5 +1,8 @@
 package com.kaltura.netkit.connect.executor;
 
+import android.text.format.DateUtils;
+import android.util.TimeUtils;
+
 public class RetryPolicy {
 
     private int numRetries;
@@ -30,6 +33,6 @@ public class RetryPolicy {
     }
 
     public long getDelayMS(int retryCount) {
-        return ((long) Math.pow(2, Math.abs(retryCount - numRetries)) * 1000);
+        return ((long) Math.pow(2, Math.abs(retryCount - numRetries)) * DateUtils.SECOND_IN_MILLIS);
     }
 }
