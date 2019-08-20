@@ -1,15 +1,15 @@
 package com.kaltura.netkit.connect.executor;
 
-public class RertryPolicy {
+public class RetryPolicy {
 
     private int numRetries;
     private final int DEFAULT_MAX_RETRIES = 5;
 
-    public RertryPolicy() {
+    public RetryPolicy() {
         this.numRetries = 3;
     }
 
-    public RertryPolicy(int numRetries) {
+    public RetryPolicy(int numRetries) {
         setNumRetries(numRetries);
     }
 

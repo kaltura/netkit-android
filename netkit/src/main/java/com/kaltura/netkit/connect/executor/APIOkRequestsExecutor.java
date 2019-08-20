@@ -49,7 +49,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     public static final String TAG = "APIOkRequestsExecutor";
-    public static RertryPolicy rertryPolicy = new RertryPolicy();
+    public static RetryPolicy rertryPolicy = new RetryPolicy();
 
     static final MediaType JSON_MediaType = MediaType.parse("application/json");
 
