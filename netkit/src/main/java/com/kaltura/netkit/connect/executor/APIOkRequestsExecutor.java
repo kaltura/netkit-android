@@ -56,22 +56,22 @@ public class APIOkRequestsExecutor implements RequestQueue {
     private RequestConfiguration defaultConfiguration = new RequestConfiguration() {
         @Override
         public long getReadTimeout() {
-            return 20000;
+            return rertryPolicy.getReadTimeoutMs();
         }
 
         @Override
         public long getWriteTimeout() {
-            return 20000;
+            return rertryPolicy.getWriteTimeoutMs();
         }
 
         @Override
         public long getConnectTimeout() {
-            return 10000;
+            return rertryPolicy.getConnectTimeoutMs();
         }
 
         @Override
         public int getRetry() {
-            return 3;
+            return rertryPolicy.getNumRetries();
         }
     };
 
@@ -206,7 +206,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     @Override
     public String queue(final RequestElement requestElement) {
         final Request request = buildRestRequest(requestElement, BodyBuilder.Default);
-        return queue(request, requestElement, APIOkRequestsExecutor.rertryPolicy.getNumRetries());
+        return queue(request, requestElement, defaultConfiguration.getRetry());
     }
 
     private String queue(final Request request, final RequestElement action, final int retryCount) {

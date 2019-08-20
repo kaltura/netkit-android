@@ -152,7 +152,6 @@ public class RequestBuilder<T extends RequestBuilder> {
                 }
             }
         };
-
     }
 
     public T addParams(JsonObject others){
