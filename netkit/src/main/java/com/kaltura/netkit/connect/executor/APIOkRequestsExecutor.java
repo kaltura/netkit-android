@@ -140,42 +140,42 @@ public class APIOkRequestsExecutor implements RequestQueue {
                 .eventListener(new EventListener() {
                     @Override
                     public void connectStart(Call call, InetSocketAddress inetSocketAddress, Proxy proxy) {
-                        String msg = "connectStart ";
-                        if (call != null && call.request() != null) {
-                            msg += call.request().url();
-                        }
-                        Log.d(TAG, msg);
+//                        String msg = "connectStart ";
+//                        if (call != null && call.request() != null) {
+//                            msg += call.request().url();
+//                        }
+//                        Log.d(TAG, msg);
                         super.connectStart(call, inetSocketAddress, proxy);
                     }
 
                     @Override
                     public void connectEnd(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, Protocol protocol) {
-                        Log.d(TAG, "connectEnd");
-                        super.connectEnd(call, inetSocketAddress, proxy, protocol);
+//                        Log.d(TAG, "connectEnd");
+//                        super.connectEnd(call, inetSocketAddress, proxy, protocol);
                     }
 
                     @Override
                     public void callFailed(Call call, IOException ioe) {
-                        String msg = "callFailed ";
+                        String msg = "okhttp callFailed ";
                         if (ioe != null) {
                             msg += ioe.toString();
                         }
                         Log.e(TAG, msg);
                         if (networkEventListener != null) {
-                            networkEventListener.onError(ErrorElement.ServiceUnavailableError);
+                            networkEventListener.onError(ErrorElement.ServiceUnavailableError.addMessage(msg));
                         }
                         super.callFailed(call, ioe);
                     }
 
                     @Override
                     public void connectFailed(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, Protocol protocol, IOException ioe) {
-                        String msg = "connectFailed ";
+                        String msg = "okhttp connectFailed ";
                         if (ioe != null) {
                             msg += ioe.toString();
                         }
                         Log.e(TAG, msg);
                         if (networkEventListener != null) {
-                            networkEventListener.onError(ErrorElement.ServiceUnavailableError);
+                            networkEventListener.onError(ErrorElement.ServiceUnavailableError.addMessage(msg));
                         }
                         super.connectFailed(call, inetSocketAddress, proxy, protocol, ioe);
                     }
@@ -230,7 +230,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     private String queue(final Request request, final RequestElement action, final int retryCount) {
-        Log.d(TAG, "Start queue");
+        //Log.d(TAG, "Start queue");
 
         try {
             Call call = getOkClient(action.config()).newCall(request);
@@ -265,7 +265,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                         }
 
                         new Handler(Looper.getMainLooper()).postDelayed (() -> {
-                            Log.v(TAG, "queue delay = " + retryPolicy.getDelayMS(retryCount));
+                            //Log.v(TAG, "queue delay = " + retryPolicy.getDelayMS(retryCount));
                             queue(request, action, retryCount - 1);
                         }, retryPolicy.getDelayMS(retryCount));
                         return;
@@ -274,7 +274,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                     // pass parsed response to action completion block
                     ResponseElement responseElement = onGotResponse(response, action);
                     action.onComplete(responseElement);
-                    Log.v(TAG, "enqueued request finished with success = " + response.isSuccessful() + " , results passed to callback");
+                    //Log.v(TAG, "enqueued request finished with success = " + response.isSuccessful() + " , results passed to callback");
                 }
             });
             return (String) call.request().tag();
