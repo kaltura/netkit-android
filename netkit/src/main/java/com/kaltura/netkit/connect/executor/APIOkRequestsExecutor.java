@@ -155,12 +155,28 @@ public class APIOkRequestsExecutor implements RequestQueue {
                     }
 
                     @Override
+                    public void callFailed(Call call, IOException ioe) {
+                        String msg = "callFailed ";
+                        if (ioe != null) {
+                            msg += ioe.toString();
+                        }
+                        Log.e(TAG, msg);
+                        if (networkEventListener != null) {
+                            networkEventListener.onError(ErrorElement.ServiceUnavailableError);
+                        }
+                        super.callFailed(call, ioe);
+                    }
+
+                    @Override
                     public void connectFailed(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, Protocol protocol, IOException ioe) {
                         String msg = "connectFailed ";
                         if (ioe != null) {
-                            msg += ioe.getMessage();
+                            msg += ioe.toString();
                         }
                         Log.e(TAG, msg);
+                        if (networkEventListener != null) {
+                            networkEventListener.onError(ErrorElement.ServiceUnavailableError);
+                        }
                         super.connectFailed(call, inetSocketAddress, proxy, protocol, ioe);
                     }
                 })
@@ -241,8 +257,11 @@ public class APIOkRequestsExecutor implements RequestQueue {
                     if (response.code() >= HttpURLConnection.HTTP_BAD_REQUEST && retryCount > 0) {
                         Log.d(TAG, "enqueued request finished with failure, retryCount = " + retryCount + " response = " + response.message());
                         if (networkEventListener != null) {
-                            ResponseElement responseElement = onGotResponse(response, action);
-                            networkEventListener.onError(responseElement.getError());
+                            ErrorElement errorElement = ErrorElement.fromCode(response.code(), response.message());
+                            if (response.request() != null && response.request().url() != null) {
+                                errorElement.addMessage("url=" + response.request().url().toString());
+                            }
+                            networkEventListener.onError(errorElement);
                         }
 
                         new Handler(Looper.getMainLooper()).postDelayed (() -> {
