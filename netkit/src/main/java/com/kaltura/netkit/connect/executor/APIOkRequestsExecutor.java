@@ -77,13 +77,13 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     private static APIOkRequestsExecutor self;
     private static OkHttpClient.Builder mClientBuilder;
-    
+
     private OkHttpClient mOkClient;
     private boolean addSig;
     private IdFactory idFactory = new RequestIdFactory(); // default
     private boolean enableLogs = true;
 
-    
+
 
     public static APIOkRequestsExecutor getSingleton() {
         if (self == null) {
@@ -219,7 +219,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                 public void onFailure(Call call, IOException e) { //!! in case of request error on client side
 
                     if (call.isCanceled()) {
-                        //logger.warn("onFailure: call "+call.request().tag()+" was canceled. not passing results");
+                        //Log.w(TAG, "onFailure: call " + call.request().tag() + " was canceled. not passing results");
                         return;
                     }
                     // handle failures: create response from exception
@@ -230,12 +230,14 @@ public class APIOkRequestsExecutor implements RequestQueue {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (call.isCanceled()) {
-//                        logger.warn("call "+call.request().tag()+" was canceled. not passing results");
+                        //Log.w(TAG, "call " + call.request().tag() + " was canceled. not passing results");
                         return;
                     }
 
                     if (response.code() >= HttpURLConnection.HTTP_BAD_REQUEST && retryCount > 0) {
                         Log.d(TAG, "enqueued request finished with failure, retryCount = " + retryCount + " response = " + response.message());
+                        //ResponseElement responseElement = onGotResponse(response, action);
+                        //action.onNetworkError(responseElement);
                         new Handler(Looper.getMainLooper()).postDelayed (() -> {
                             Log.v(TAG, "queue delay = " + rertryPolicy.getDelayMS(retryCount));
                             queue(request, action, retryCount - 1);
@@ -246,7 +248,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                     // pass parsed response to action completion block
                     ResponseElement responseElement = onGotResponse(response, action);
                     action.onComplete(responseElement);
-                    Log.v(TAG, "enqueued request finished with success, results passed to callback");
+                    Log.v(TAG, "enqueued request finished with success = " + response.isSuccessful() + " , results passed to callback");
                 }
             });
             return (String) call.request().tag();

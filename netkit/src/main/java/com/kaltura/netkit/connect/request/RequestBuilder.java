@@ -155,7 +155,7 @@ public class RequestBuilder<T extends RequestBuilder> {
     }
 
     public T addParams(JsonObject others){
-        if(others == null){
+        if(others == null) {
             return (T) this;
         }
         if(this.params == null){
