@@ -13,6 +13,7 @@ import com.kaltura.netkit.connect.request.RequestElement;
 import com.kaltura.netkit.connect.request.RequestIdFactory;
 import com.kaltura.netkit.connect.response.ResponseElement;
 import com.kaltura.netkit.utils.ErrorElement;
+import com.kaltura.netkit.utils.NetworkEventListener;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -43,47 +44,45 @@ import okio.Buffer;
  */
 public class APIOkRequestsExecutor implements RequestQueue {
 
-
     public interface IdFactory {
         String factorId(String factor);
     }
 
     public static final String TAG = "APIOkRequestsExecutor";
-    public static RetryPolicy rertryPolicy = new RetryPolicy();
+    public static RetryPolicy retryPolicy = new RetryPolicy();
 
     static final MediaType JSON_MediaType = MediaType.parse("application/json");
 
     private RequestConfiguration defaultConfiguration = new RequestConfiguration() {
         @Override
         public long getReadTimeout() {
-            return rertryPolicy.getReadTimeoutMs();
+            return retryPolicy.getReadTimeoutMs();
         }
 
         @Override
         public long getWriteTimeout() {
-            return rertryPolicy.getWriteTimeoutMs();
+            return retryPolicy.getWriteTimeoutMs();
         }
 
         @Override
         public long getConnectTimeout() {
-            return rertryPolicy.getConnectTimeoutMs();
+            return retryPolicy.getConnectTimeoutMs();
         }
 
         @Override
         public int getRetry() {
-            return rertryPolicy.getNumRetries();
+            return retryPolicy.getNumRetries();
         }
     };
 
     private static APIOkRequestsExecutor self;
     private static OkHttpClient.Builder mClientBuilder;
+    private NetworkEventListener networkEventListener;
 
     private OkHttpClient mOkClient;
     private boolean addSig;
     private IdFactory idFactory = new RequestIdFactory(); // default
     private boolean enableLogs = true;
-
-
 
     public static APIOkRequestsExecutor getSingleton() {
         if (self == null) {
@@ -181,6 +180,11 @@ public class APIOkRequestsExecutor implements RequestQueue {
         this.enableLogs = enable;
     }
 
+    @Override
+    public void setNetworkEventListener(NetworkEventListener networkEventListener) {
+        this.networkEventListener = networkEventListener;
+    }
+
     private RequestBody buildMultipartBody(HashMap<String, String> params) {
         MultipartBody.Builder bodyBuilder = new MultipartBody.Builder();
         for (String key : params.keySet()) {
@@ -236,12 +240,15 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
                     if (response.code() >= HttpURLConnection.HTTP_BAD_REQUEST && retryCount > 0) {
                         Log.d(TAG, "enqueued request finished with failure, retryCount = " + retryCount + " response = " + response.message());
-                        //ResponseElement responseElement = onGotResponse(response, action);
-                        //action.onNetworkError(responseElement);
+                        if (networkEventListener != null) {
+                            ResponseElement responseElement = onGotResponse(response, action);
+                            networkEventListener.onError(responseElement.getError());
+                        }
+
                         new Handler(Looper.getMainLooper()).postDelayed (() -> {
-                            Log.v(TAG, "queue delay = " + rertryPolicy.getDelayMS(retryCount));
+                            Log.v(TAG, "queue delay = " + retryPolicy.getDelayMS(retryCount));
                             queue(request, action, retryCount - 1);
-                        }, rertryPolicy.getDelayMS(retryCount));
+                        }, retryPolicy.getDelayMS(retryCount));
                         return;
                     }
 
