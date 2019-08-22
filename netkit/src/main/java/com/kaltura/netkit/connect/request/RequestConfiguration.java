@@ -5,11 +5,13 @@ package com.kaltura.netkit.connect.request;
 
 public interface RequestConfiguration {
 
-    long getReadTimeout();
+    long getReadTimeoutMs();
 
-    long getWriteTimeout();
+    long getWriteTimeoutMs();
 
-    long getConnectTimeout();
+    long getConnectTimeoutMs();
 
-    int getRetry();
+    long getRetryDelayMs(int retryCount);
+
+    int getRetryAttempts();
 }

@@ -49,31 +49,10 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     public static final String TAG = "APIOkRequestsExecutor";
-    public static RetryPolicy retryPolicy = new RetryPolicy();
 
     static final MediaType JSON_MediaType = MediaType.parse("application/json");
 
-    private RequestConfiguration defaultConfiguration = new RequestConfiguration() {
-        @Override
-        public long getReadTimeout() {
-            return retryPolicy.getReadTimeoutMs();
-        }
-
-        @Override
-        public long getWriteTimeout() {
-            return retryPolicy.getWriteTimeoutMs();
-        }
-
-        @Override
-        public long getConnectTimeout() {
-            return retryPolicy.getConnectTimeoutMs();
-        }
-
-        @Override
-        public int getRetry() {
-            return retryPolicy.getNumRetries();
-        }
-    };
+    private RequestConfiguration requestConfiguration = new RetryPolicy();
 
     private static APIOkRequestsExecutor self;
     private static OkHttpClient.Builder mClientBuilder;
@@ -95,17 +74,21 @@ public class APIOkRequestsExecutor implements RequestQueue {
     // private GzipInterceptor gzipInterceptor = new GzipInterceptor();
 
     public APIOkRequestsExecutor() {
-        mOkClient = configClient(createOkClientBuilder(), defaultConfiguration).build();
+        mOkClient = configClient(createOkClientBuilder(), requestConfiguration).build();
     }
 
-    public APIOkRequestsExecutor(RequestConfiguration defaultConfiguration) {
-        setDefaultConfiguration(defaultConfiguration);
+    public APIOkRequestsExecutor(RequestConfiguration requestConfiguration) {
+        setRequestConfiguration(requestConfiguration);
     }
 
 
     public APIOkRequestsExecutor setRequestIdFactory(IdFactory factory) {
         this.idFactory = factory;
         return this;
+    }
+
+    public RequestConfiguration getRequestConfiguration() {
+        return requestConfiguration;
     }
 
     /**
@@ -132,11 +115,12 @@ public class APIOkRequestsExecutor implements RequestQueue {
         return new OkHttpClient.Builder().connectionPool(new ConnectionPool()); // default connection pool - holds 5 connections up to 5 minutes idle time
     }
 
+
     private OkHttpClient.Builder configClient(OkHttpClient.Builder builder, RequestConfiguration config) {
 
-        builder.followRedirects(true).connectTimeout(config.getConnectTimeout(), TimeUnit.MILLISECONDS)
-                .readTimeout(config.getReadTimeout(), TimeUnit.MILLISECONDS)
-                .writeTimeout(config.getWriteTimeout(), TimeUnit.MILLISECONDS)
+        builder.followRedirects(true).connectTimeout(config.getConnectTimeoutMs(), TimeUnit.MILLISECONDS)
+                .readTimeout(config.getReadTimeoutMs(), TimeUnit.MILLISECONDS)
+                .writeTimeout(config.getWriteTimeoutMs(), TimeUnit.MILLISECONDS)
                 .eventListener(new EventListener() {
                     @Override
                     public void connectStart(Call call, InetSocketAddress inetSocketAddress, Proxy proxy) {
@@ -180,15 +164,15 @@ public class APIOkRequestsExecutor implements RequestQueue {
                         super.connectFailed(call, inetSocketAddress, proxy, protocol, ioe);
                     }
                 })
-                .retryOnConnectionFailure(config.getRetry() > 0);
+                .retryOnConnectionFailure(config.getRetryAttempts() > 0);
 
         return builder;
     }
 
     @Override
-    public void setDefaultConfiguration(RequestConfiguration defaultConfiguration) {
-        this.defaultConfiguration = defaultConfiguration;
-        mOkClient = configClient(createOkClientBuilder(), defaultConfiguration).build();
+    public void setRequestConfiguration(RequestConfiguration requestConfiguration) {
+        this.requestConfiguration = requestConfiguration;
+        mOkClient = configClient(createOkClientBuilder(), requestConfiguration).build();
     }
 
     @Override
@@ -226,7 +210,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     @Override
     public String queue(final RequestElement requestElement) {
         final Request request = buildRestRequest(requestElement, BodyBuilder.Default);
-        return queue(request, requestElement, defaultConfiguration.getRetry());
+        return queue(request, requestElement, requestConfiguration.getRetryAttempts());
     }
 
     private String queue(final Request request, final RequestElement action, final int retryCount) {
@@ -267,7 +251,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                         new Handler(Looper.getMainLooper()).postDelayed (() -> {
                             //Log.v(TAG, "queue delay = " + retryPolicy.getDelayMS(retryCount));
                             queue(request, action, retryCount - 1);
-                        }, retryPolicy.getDelayMS(retryCount));
+                        }, requestConfiguration.getRetryDelayMs(retryCount));
                         return;
                     }
 

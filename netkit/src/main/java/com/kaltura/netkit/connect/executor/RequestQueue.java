@@ -8,7 +8,7 @@ import com.kaltura.netkit.utils.NetworkEventListener;
 
 public interface RequestQueue {
 
-    void setDefaultConfiguration(RequestConfiguration config);
+    void setRequestConfiguration(RequestConfiguration config);
 
     String queue(RequestElement request);
 

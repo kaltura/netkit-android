@@ -2,73 +2,79 @@ package com.kaltura.netkit.connect.executor;
 
 import android.text.format.DateUtils;
 
-public class RetryPolicy {
+import com.kaltura.netkit.connect.request.RequestConfiguration;
 
-    private int numRetries;
-    private int readTimeoutMs;
-    private int writeTimeoutMs;
-    private int connectTimeoutMs;
+public class RetryPolicy implements RequestConfiguration {
+
+    private long readTimeoutMs;
+    private long writeTimeoutMs;
+    private long connectTimeoutMs;
+    private int retryAttemps;
     private final int DEFAULT_MAX_RETRIES = 10;
 
     public RetryPolicy() {
-        this.numRetries = 4;
+        this.retryAttemps = 4;
         this.readTimeoutMs = 20000;
         this.writeTimeoutMs = 20000;
         this.connectTimeoutMs = 10000;
     }
 
-    public RetryPolicy(int numRetries, int readTimeoutMs, int writeTimeoutMs, int connectTimeoutMs) {
-        setNumRetries(numRetries);
+    public RetryPolicy(int retryAttemps, int readTimeoutMs, int writeTimeoutMs, int connectTimeoutMs) {
+        setRetryAttemps(retryAttemps);
         this.readTimeoutMs = readTimeoutMs;
         this.writeTimeoutMs = writeTimeoutMs;
         this.connectTimeoutMs = connectTimeoutMs;
     }
 
-    public int getNumRetries() {
-        return numRetries;
+    public int getRetryAttempts() {
+        return retryAttemps;
     }
 
-    public RetryPolicy setNumRetries(int numRetries) {
-        if (numRetries > DEFAULT_MAX_RETRIES) {
-            this.numRetries = DEFAULT_MAX_RETRIES;
+    public RetryPolicy setRetryAttemps(int retryAttemps) {
+        if (retryAttemps > DEFAULT_MAX_RETRIES) {
+            this.retryAttemps = DEFAULT_MAX_RETRIES;
         } else {
-            this.numRetries = numRetries;
+            this.retryAttemps = retryAttemps;
         }
         return this;
     }
 
-    public int getReadTimeoutMs() {
+    @Override
+    public long getReadTimeoutMs() {
         return readTimeoutMs;
     }
 
-    public RetryPolicy setReadTimeoutMs(int readTimeoutMs) {
+    public RetryPolicy setReadTimeoutMs(long readTimeoutMs) {
         this.readTimeoutMs = readTimeoutMs;
         return this;
     }
 
-    public int getWriteTimeoutMs() {
+    @Override
+    public long getWriteTimeoutMs() {
         return writeTimeoutMs;
     }
 
-    public RetryPolicy setWriteTimeoutMs(int writeTimeoutMs) {
+    public RetryPolicy setWriteTimeoutMs(long writeTimeoutMs) {
         this.writeTimeoutMs = writeTimeoutMs;
         return this;
     }
 
-    public int getConnectTimeoutMs() {
+    @Override
+    public long getConnectTimeoutMs() {
         return connectTimeoutMs;
     }
 
-    public RetryPolicy setConnectTimeoutMs(int connectTimeoutMs) {
+    public RetryPolicy setConnectTimeoutMs(long connectTimeoutMs) {
         this.connectTimeoutMs = connectTimeoutMs;
         return this;
     }
 
-    public int getMaxRetries() {
-        return DEFAULT_MAX_RETRIES;
+    @Override
+    public long getRetryDelayMs(int retryCount) {
+        return ((long) Math.pow(2, Math.abs(retryCount - retryAttemps)) * DateUtils.SECOND_IN_MILLIS);
     }
 
-    public long getDelayMS(int retryCount) {
-        return ((long) Math.pow(2, Math.abs(retryCount - numRetries)) * DateUtils.SECOND_IN_MILLIS);
+    public int getMaxRetries() {
+        return DEFAULT_MAX_RETRIES;
     }
 }
