@@ -13,7 +13,7 @@ import com.kaltura.netkit.connect.request.RequestElement;
 import com.kaltura.netkit.connect.request.RequestIdFactory;
 import com.kaltura.netkit.connect.response.ResponseElement;
 import com.kaltura.netkit.utils.ErrorElement;
-import com.kaltura.netkit.utils.NetworkEventListener;
+import com.kaltura.netkit.utils.NetworkErrorEventListener;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -52,11 +52,11 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     static final MediaType JSON_MediaType = MediaType.parse("application/json");
 
-    private RequestConfiguration requestConfiguration = new RetryPolicy();
+    private RequestConfiguration requestConfiguration = new RequestConfiguration();
 
     private static APIOkRequestsExecutor self;
     private static OkHttpClient.Builder mClientBuilder;
-    private NetworkEventListener networkEventListener;
+    private NetworkErrorEventListener networkErrorEventListener;
 
     private OkHttpClient mOkClient;
     private boolean addSig;
@@ -145,8 +145,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
                             msg += ioe.toString();
                         }
                         Log.e(TAG, msg);
-                        if (networkEventListener != null) {
-                            networkEventListener.onError(ErrorElement.ServiceUnavailableError.addMessage(msg));
+                        if (networkErrorEventListener != null) {
+                            networkErrorEventListener.onError(ErrorElement.ServiceUnavailableError.addMessage(msg));
                         }
                         super.callFailed(call, ioe);
                     }
@@ -158,8 +158,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
                             msg += ioe.toString();
                         }
                         Log.e(TAG, msg);
-                        if (networkEventListener != null) {
-                            networkEventListener.onError(ErrorElement.ServiceUnavailableError.addMessage(msg));
+                        if (networkErrorEventListener != null) {
+                            networkErrorEventListener.onError(ErrorElement.ServiceUnavailableError.addMessage(msg));
                         }
                         super.connectFailed(call, inetSocketAddress, proxy, protocol, ioe);
                     }
@@ -181,8 +181,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     @Override
-    public void setNetworkEventListener(NetworkEventListener networkEventListener) {
-        this.networkEventListener = networkEventListener;
+    public void setNetworkErrorEventListener(NetworkErrorEventListener networkErrorEventListener) {
+        this.networkErrorEventListener = networkErrorEventListener;
     }
 
     private RequestBody buildMultipartBody(HashMap<String, String> params) {
@@ -202,9 +202,9 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     @Override
-    public String queue(final RequestElement requestElement, final int retryCount) {
+    public String queue(final RequestElement requestElement, final int retryCounter) {
         final Request request = buildRestRequest(requestElement, BodyBuilder.Default);
-        return queue(request, requestElement, retryCount);
+        return queue(request, requestElement, retryCounter);
     }
 
     @Override
@@ -213,7 +213,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
         return queue(request, requestElement, requestConfiguration.getRetryAttempts());
     }
 
-    private String queue(final Request request, final RequestElement action, final int retryCount) {
+    private String queue(final Request request, final RequestElement action, final int retryCounter) {
         //Log.d(TAG, "Start queue");
 
         try {
@@ -238,20 +238,20 @@ public class APIOkRequestsExecutor implements RequestQueue {
                         return;
                     }
 
-                    if (response.code() >= HttpURLConnection.HTTP_BAD_REQUEST && retryCount > 0) {
-                        Log.d(TAG, "enqueued request finished with failure, retryCount = " + retryCount + " response = " + response.message());
-                        if (networkEventListener != null) {
+                    if (response.code() >= HttpURLConnection.HTTP_BAD_REQUEST && retryCounter > 0) {
+                        Log.d(TAG, "enqueued request finished with failure, retryCounter = " + retryCounter + " response = " + response.message());
+                        if (networkErrorEventListener != null) {
                             ErrorElement errorElement = ErrorElement.fromCode(response.code(), response.message());
                             if (response.request() != null && response.request().url() != null) {
                                 errorElement.addMessage("url=" + response.request().url().toString());
                             }
-                            networkEventListener.onError(errorElement);
+                            networkErrorEventListener.onError(errorElement);
                         }
 
                         new Handler(Looper.getMainLooper()).postDelayed (() -> {
-                            //Log.v(TAG, "queue delay = " + retryPolicy.getDelayMS(retryCount));
-                            queue(request, action, retryCount - 1);
-                        }, requestConfiguration.getRetryDelayMs(retryCount));
+                            //Log.v(TAG, "queue delay = " + retryPolicy.getDelayMS(retryCounter));
+                            queue(request, action, retryCounter - 1);
+                        }, requestConfiguration.getRetryDelayMs(retryCounter));
                         return;
                     }
 

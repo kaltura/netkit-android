@@ -1,6 +1,6 @@
 package com.kaltura.netkit.utils;
 
-public interface NetworkEventListener {
+public interface NetworkErrorEventListener {
     void onError(ErrorElement errorElement);
 }
 

@@ -4,7 +4,7 @@ package com.kaltura.netkit.connect.executor;
 import com.kaltura.netkit.connect.request.RequestConfiguration;
 import com.kaltura.netkit.connect.request.RequestElement;
 import com.kaltura.netkit.connect.response.ResponseElement;
-import com.kaltura.netkit.utils.NetworkEventListener;
+import com.kaltura.netkit.utils.NetworkErrorEventListener;
 
 public interface RequestQueue {
 
@@ -26,5 +26,5 @@ public interface RequestQueue {
 
     void enableLogs(boolean enable);
 
-    void setNetworkEventListener(NetworkEventListener networkEventListener);
+    void setNetworkErrorEventListener(NetworkErrorEventListener networkErrorEventListener);
 }
