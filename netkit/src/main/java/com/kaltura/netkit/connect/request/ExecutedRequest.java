@@ -9,7 +9,6 @@ public class ExecutedRequest implements ResponseElement {
     int code = -1;
     String response = "";
     boolean isSuccess = false;
-
     ErrorElement error = null;
 
     public ExecutedRequest requestId(String id) {
