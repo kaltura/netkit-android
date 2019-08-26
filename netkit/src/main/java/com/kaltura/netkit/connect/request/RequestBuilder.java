@@ -37,32 +37,32 @@ public class RequestBuilder<T extends RequestBuilder> {
     private RequestConfiguration configuration = null;
     private OnRequestCompletion completion;
 
-    public RequestBuilder(){
+    public RequestBuilder() {
         headers = new HashMap();
         headers.put("ContentType", "application/json");
     }
 
-    public T url(String url){
+    public T url(String url) {
         this.baseUrl = url;
         return (T) this;
     }
 
-    public T method(String method){
+    public T method(String method) {
         this.method = method;
         return (T) this;
     }
 
-    public T id(String id){
+    public T id(String id) {
         this.id = id;
         return (T) this;
     }
 
-    public T tag(String tag){
+    public T tag(String tag) {
         this.tag = tag;
         return (T) this;
     }
 
-    public T completion(OnRequestCompletion completion){
+    public T completion(OnRequestCompletion completion) {
         this.completion = completion;
         return (T) this;
     }
@@ -82,7 +82,7 @@ public class RequestBuilder<T extends RequestBuilder> {
         return (T) this;
     }
 
-    public MultiRequestBuilder add(RequestBuilder... requestBuilder){
+    public MultiRequestBuilder add(RequestBuilder... requestBuilder) {
         return new MultiRequestBuilder(this).add(requestBuilder);
     }
 
@@ -91,7 +91,7 @@ public class RequestBuilder<T extends RequestBuilder> {
         return (T) this;
     }
 
-    public RequestElement build(){
+    public RequestElement build() {
         return new RequestElement() {
 
             @Override
@@ -102,14 +102,14 @@ public class RequestBuilder<T extends RequestBuilder> {
             @Override
             public String getUrl() {
                 //return TextUtils.join("/", new String[]{baseUrl,service,action});
-                if(baseUrl == null){
+                if (baseUrl == null) {
 
                 }
                 StringBuilder urlBuilder = new StringBuilder(baseUrl);
-                if(service != null){
+                if (service != null) {
                     urlBuilder.append("service/").append(service);
                 }
-                if(action != null){
+                if (action != null) {
                     urlBuilder.append("/action/").append(action);
                 }
 
@@ -147,19 +147,18 @@ public class RequestBuilder<T extends RequestBuilder> {
 
             @Override
             public void onComplete(final ResponseElement response) {
-                if(completion != null){
+                if (completion != null) {
                     completion.onComplete(response);
                 }
             }
         };
-
     }
 
-    public T addParams(JsonObject others){
-        if(others == null){
+    public T addParams(JsonObject others) {
+        if (others == null) {
             return (T) this;
         }
-        if(this.params == null){
+        if (this.params == null) {
             this.params = new JsonObject();
         }
         for(Map.Entry<String, JsonElement> entry : others.entrySet()) {
@@ -170,17 +169,17 @@ public class RequestBuilder<T extends RequestBuilder> {
     }
 
     public T addParam(String key, String value) {
-        if(this.params == null){
+        if (this.params == null) {
             this.params = new JsonObject();
         }
         this.params.addProperty(key, value);
         return (T) this;
     }
 
-    public T removeParams(@NonNull String... keys){
-        if(params == null) return (T) this;
+    public T removeParams(@NonNull String... keys) {
+        if (params == null) return (T) this;
 
-        for (String key : keys){
+        for (String key : keys) {
             this.params.remove(key);
         }
 
