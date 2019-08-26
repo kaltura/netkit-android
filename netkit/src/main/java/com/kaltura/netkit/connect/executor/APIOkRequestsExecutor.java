@@ -164,7 +164,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                         super.connectFailed(call, inetSocketAddress, proxy, protocol, ioe);
                     }
                 })
-                .retryOnConnectionFailure(config.getRetryAttempts() > 0);
+                .retryOnConnectionFailure(config.getMaxRetries() > 0);
 
         return builder;
     }
@@ -210,7 +210,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     @Override
     public String queue(final RequestElement requestElement) {
         final Request request = buildRestRequest(requestElement, BodyBuilder.Default);
-        return queue(request, requestElement, requestConfiguration.getRetryAttempts());
+        return queue(request, requestElement, requestConfiguration.getMaxRetries());
     }
 
     private String queue(final Request request, final RequestElement action, final int retryCounter) {
