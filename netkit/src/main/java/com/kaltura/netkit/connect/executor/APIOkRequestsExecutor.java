@@ -1,6 +1,8 @@
 package com.kaltura.netkit.connect.executor;
 
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,8 +13,12 @@ import com.kaltura.netkit.connect.request.RequestElement;
 import com.kaltura.netkit.connect.request.RequestIdFactory;
 import com.kaltura.netkit.connect.response.ResponseElement;
 import com.kaltura.netkit.utils.ErrorElement;
+import com.kaltura.netkit.utils.NetworkErrorEventListener;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,11 +27,13 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
+import okhttp3.EventListener;
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -36,45 +44,24 @@ import okio.Buffer;
  */
 public class APIOkRequestsExecutor implements RequestQueue {
 
-
     public interface IdFactory {
         String factorId(String factor);
     }
 
     public static final String TAG = "APIOkRequestsExecutor";
+
     static final MediaType JSON_MediaType = MediaType.parse("application/json");
 
-    private RequestConfiguration defaultConfiguration = new RequestConfiguration() {
-        @Override
-        public long getReadTimeout() {
-            return 20000;
-        }
-
-        @Override
-        public long getWriteTimeout() {
-            return 20000;
-        }
-
-        @Override
-        public long getConnectTimeout() {
-            return 10000;
-        }
-
-        @Override
-        public int getRetry() {
-            return 2;
-        }
-    };
+    private RequestConfiguration requestConfiguration = new RequestConfiguration();
 
     private static APIOkRequestsExecutor self;
     private static OkHttpClient.Builder mClientBuilder;
-    
+    private NetworkErrorEventListener networkErrorEventListener;
+
     private OkHttpClient mOkClient;
     private boolean addSig;
     private IdFactory idFactory = new RequestIdFactory(); // default
     private boolean enableLogs = true;
-
-    
 
     public static APIOkRequestsExecutor getSingleton() {
         if (self == null) {
@@ -87,17 +74,21 @@ public class APIOkRequestsExecutor implements RequestQueue {
     // private GzipInterceptor gzipInterceptor = new GzipInterceptor();
 
     public APIOkRequestsExecutor() {
-        mOkClient = configClient(createOkClientBuilder(), defaultConfiguration).build();
+        mOkClient = configClient(createOkClientBuilder(), requestConfiguration).build();
     }
 
-    public APIOkRequestsExecutor(RequestConfiguration defaultConfiguration) {
-        setDefaultConfiguration(defaultConfiguration);
+    public APIOkRequestsExecutor(RequestConfiguration requestConfiguration) {
+        setRequestConfiguration(requestConfiguration);
     }
 
 
     public APIOkRequestsExecutor setRequestIdFactory(IdFactory factory) {
         this.idFactory = factory;
         return this;
+    }
+
+    public RequestConfiguration getRequestConfiguration() {
+        return requestConfiguration;
     }
 
     /**
@@ -124,24 +115,74 @@ public class APIOkRequestsExecutor implements RequestQueue {
         return new OkHttpClient.Builder().connectionPool(new ConnectionPool()); // default connection pool - holds 5 connections up to 5 minutes idle time
     }
 
+
     private OkHttpClient.Builder configClient(OkHttpClient.Builder builder, RequestConfiguration config) {
-        builder.followRedirects(true).connectTimeout(config.getConnectTimeout(), TimeUnit.MILLISECONDS)
-                .readTimeout(config.getReadTimeout(), TimeUnit.MILLISECONDS)
-                .writeTimeout(config.getWriteTimeout(), TimeUnit.MILLISECONDS)
-                .retryOnConnectionFailure(config.getRetry() > 0);
+
+        builder.followRedirects(true).connectTimeout(config.getConnectTimeoutMs(), TimeUnit.MILLISECONDS)
+                .readTimeout(config.getReadTimeoutMs(), TimeUnit.MILLISECONDS)
+                .writeTimeout(config.getWriteTimeoutMs(), TimeUnit.MILLISECONDS)
+                .eventListener(new EventListener() {
+                    @Override
+                    public void connectStart(Call call, InetSocketAddress inetSocketAddress, Proxy proxy) {
+//                        String msg = "connectStart ";
+//                        if (call != null && call.request() != null) {
+//                            msg += call.request().url();
+//                        }
+//                        Log.d(TAG, msg);
+                        super.connectStart(call, inetSocketAddress, proxy);
+                    }
+
+                    @Override
+                    public void connectEnd(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, Protocol protocol) {
+//                        Log.d(TAG, "connectEnd");
+                        super.connectEnd(call, inetSocketAddress, proxy, protocol);
+                    }
+
+                    @Override
+                    public void callFailed(Call call, IOException ioe) {
+                        String msg = "okhttp callFailed ";
+                        if (ioe != null) {
+                            msg += ioe.toString();
+                        }
+                        Log.e(TAG, msg);
+                        if (networkErrorEventListener != null) {
+                            networkErrorEventListener.onError(ErrorElement.ServiceUnavailableError.addMessage(msg));
+                        }
+                        super.callFailed(call, ioe);
+                    }
+
+                    @Override
+                    public void connectFailed(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, Protocol protocol, IOException ioe) {
+                        String msg = "okhttp connectFailed ";
+                        if (ioe != null) {
+                            msg += ioe.toString();
+                        }
+                        Log.e(TAG, msg);
+                        if (networkErrorEventListener != null) {
+                            networkErrorEventListener.onError(ErrorElement.ServiceUnavailableError.addMessage(msg));
+                        }
+                        super.connectFailed(call, inetSocketAddress, proxy, protocol, ioe);
+                    }
+                })
+                .retryOnConnectionFailure(config.getRetryAttempts() > 0);
 
         return builder;
     }
 
     @Override
-    public void setDefaultConfiguration(RequestConfiguration defaultConfiguration) {
-        this.defaultConfiguration = defaultConfiguration;
-        mOkClient = configClient(createOkClientBuilder(), defaultConfiguration).build();
+    public void setRequestConfiguration(RequestConfiguration requestConfiguration) {
+        this.requestConfiguration = requestConfiguration;
+        mOkClient = configClient(createOkClientBuilder(), requestConfiguration).build();
     }
 
     @Override
     public void enableLogs(boolean enable) {
         this.enableLogs = enable;
+    }
+
+    @Override
+    public void setNetworkErrorEventListener(NetworkErrorEventListener networkErrorEventListener) {
+        this.networkErrorEventListener = networkErrorEventListener;
     }
 
     private RequestBody buildMultipartBody(HashMap<String, String> params) {
@@ -161,12 +202,19 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     @Override
-    public String queue(final RequestElement requestElement) {
+    public String queue(final RequestElement requestElement, final int retryCounter) {
         final Request request = buildRestRequest(requestElement, BodyBuilder.Default);
-        return queue(request, requestElement);
+        return queue(request, requestElement, retryCounter);
     }
 
-    private String queue(final Request request, final RequestElement action) {
+    @Override
+    public String queue(final RequestElement requestElement) {
+        final Request request = buildRestRequest(requestElement, BodyBuilder.Default);
+        return queue(request, requestElement, requestConfiguration.getRetryAttempts());
+    }
+
+    private String queue(final Request request, final RequestElement action, final int retryCounter) {
+        //Log.d(TAG, "Start queue");
 
         try {
             Call call = getOkClient(action.config()).newCall(request);
@@ -175,25 +223,42 @@ public class APIOkRequestsExecutor implements RequestQueue {
                 public void onFailure(Call call, IOException e) { //!! in case of request error on client side
 
                     if (call.isCanceled()) {
-                        //logger.warn("onFailure: call "+call.request().tag()+" was canceled. not passing results");
+                        //Log.w(TAG, "onFailure: call " + call.request().tag() + " was canceled. not passing results");
                         return;
                     }
                     // handle failures: create response from exception
                     action.onComplete(new ExecutedRequest().error(e).success(false));
-                    Log.v(TAG, "enqueued request finished with failure, results passed to callback");
+                    Log.e(TAG, "enqueued request finished with failure, results passed to callback");
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (call.isCanceled()) {
-//                        logger.warn("call "+call.request().tag()+" was canceled. not passing results");
+                        //Log.w(TAG, "call " + call.request().tag() + " was canceled. not passing results");
+                        return;
+                    }
+
+                    if (response.code() >= HttpURLConnection.HTTP_BAD_REQUEST && retryCounter > 0) {
+                        Log.d(TAG, "enqueued request finished with failure, retryCounter = " + retryCounter + " response = " + response.message());
+                        if (networkErrorEventListener != null) {
+                            ErrorElement errorElement = ErrorElement.fromCode(response.code(), response.message());
+                            if (response.request() != null && response.request().url() != null) {
+                                errorElement.addMessage("url=" + response.request().url().toString());
+                            }
+                            networkErrorEventListener.onError(errorElement);
+                        }
+
+                        new Handler(Looper.getMainLooper()).postDelayed (() -> {
+                            //Log.v(TAG, "queue delay = " + retryPolicy.getDelayMS(retryCounter));
+                            queue(request, action, retryCounter - 1);
+                        }, requestConfiguration.getRetryDelayMs(retryCounter));
                         return;
                     }
 
                     // pass parsed response to action completion block
                     ResponseElement responseElement = onGotResponse(response, action);
                     action.onComplete(responseElement);
-                    Log.v(TAG, "enqueued request finished with success, results passed to callback");
+                    //Log.v(TAG, "enqueued request finished with success = " + response.isSuccessful() + " , results passed to callback");
                 }
             });
             return (String) call.request().tag();
