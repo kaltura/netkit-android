@@ -25,7 +25,10 @@ public class RequestConfiguration  {
         this.connectTimeoutMs = connectTimeoutMs;
     }
 
-    public int getRetryAttempts() {
+    public int getMaxRetries() {
+        if (maxRetries > MAX_RETRIES_THRESHOLD) {
+            maxRetries = MAX_RETRIES_THRESHOLD;
+        }
         return maxRetries;
     }
 
@@ -67,9 +70,5 @@ public class RequestConfiguration  {
 
     public long getRetryDelayMs(int retryCounter) {
         return ((long) Math.pow(2, Math.abs(retryCounter - maxRetries)) * DateUtils.SECOND_IN_MILLIS);
-    }
-
-    public int getMaxRetries() {
-        return MAX_RETRIES_THRESHOLD;
     }
 }
