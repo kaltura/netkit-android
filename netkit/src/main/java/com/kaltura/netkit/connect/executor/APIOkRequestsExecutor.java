@@ -135,7 +135,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                     @Override
                     public void connectEnd(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, Protocol protocol) {
 //                        Log.d(TAG, "connectEnd");
-//                        super.connectEnd(call, inetSocketAddress, proxy, protocol);
+                        super.connectEnd(call, inetSocketAddress, proxy, protocol);
                     }
 
                     @Override
