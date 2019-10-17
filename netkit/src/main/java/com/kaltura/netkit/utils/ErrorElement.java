@@ -46,7 +46,7 @@ public class ErrorElement {
     public static ErrorElement BadRequestError = new ErrorElement("BadRequestError", "Invalid or missing request params", BadRequestErrorCode);
     public static ErrorElement SessionError = new ErrorElement("SessionError", "Failed to obtain session", SessionErrorCode);
 
-    public String name;
+    private String name;
     private String message;
     private String code;
     protected Object extra;
@@ -68,6 +68,15 @@ public class ErrorElement {
 
     public ErrorElement(String message, String code) {
         this(message, code, null);
+    }
+
+    public ErrorElement setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getMessage() {

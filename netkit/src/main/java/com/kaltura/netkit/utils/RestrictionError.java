@@ -10,6 +10,7 @@ public class RestrictionError extends ErrorElement {
         NotAllowed,
         NotEntitled,
         ConcurrencyLimitation,
+        MediaConcurrencyLimitation,
         Suspended
     }
 
