@@ -24,7 +24,5 @@ public interface RequestQueue {
 
     boolean isEmpty();
 
-    void enableLogs(boolean enable);
-
     void setNetworkErrorEventListener(NetworkErrorEventListener networkErrorEventListener);
 }

@@ -1,7 +1,6 @@
 package com.kaltura.netkit.services.api.ovp.session;
 
 import androidx.annotation.NonNull;
-import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
@@ -17,6 +16,7 @@ import com.kaltura.netkit.connect.response.BaseResult;
 import com.kaltura.netkit.utils.ErrorElement;
 import com.kaltura.netkit.utils.GsonParser;
 import com.kaltura.netkit.connect.request.MultiRequestBuilder;
+import com.kaltura.netkit.utils.NKLog;
 import com.kaltura.netkit.utils.OnCompletion;
 import com.kaltura.netkit.utils.OnRequestCompletion;
 import com.kaltura.netkit.connect.response.PrimitiveResult;
@@ -33,7 +33,7 @@ import static java.lang.System.currentTimeMillis;
 
 public class OvpSessionProvider extends BaseSessionProvider {
 
-    private static final String TAG = "OvpSessionProvider";
+    private static final NKLog log = NKLog.get("OvpSessionProvider");
 
     private static final int DefaultSessionExpiry = 24 * 60 * 60; //in seconds
 
@@ -178,7 +178,7 @@ public class OvpSessionProvider extends BaseSessionProvider {
                 startAnonymousSession(sessionParams.partnerId, completion);
             }
         } else {
-            Log.e(TAG, "Session was ended or failed to start when this was called.\nCan't recover session if not started before");
+            log.e("Session was ended or failed to start when this was called.\nCan't recover session if not started before");
             if (completion != null) {
                 completion.onComplete(new PrimitiveResult().error(ErrorElement.SessionError.message("Session expired")));
             }
@@ -211,9 +211,9 @@ public class OvpSessionProvider extends BaseSessionProvider {
                                 public void onComplete(ResponseElement response) {
                                     ErrorElement error = null;
                                     if (response != null && response.isSuccess()) {//!! end session with success returns null
-                                        Log.i(TAG, "endSession: logout user session success. clearing session data.");
+                                        log.i("endSession: logout user session success. clearing session data.");
                                     } else {
-                                        Log.e(TAG, "endSession: session logout failed. clearing session data. " + (response.getError() != null ? response.getError().getMessage() : ""));
+                                        log.e("endSession: session logout failed. clearing session data. " + (response.getError() != null ? response.getError().getMessage() : ""));
                                         error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("failed to end session");
                                     }
                                     endSession();

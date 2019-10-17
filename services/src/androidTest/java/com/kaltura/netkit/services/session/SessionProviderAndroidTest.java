@@ -1,7 +1,5 @@
 package com.kaltura.netkit.services.session;
 
-import android.util.Log;
-
 import androidx.test.runner.AndroidJUnit4;
 
 import com.kaltura.netkit.connect.executor.APIOkRequestsExecutor;
@@ -15,6 +13,7 @@ import com.kaltura.netkit.services.api.ovp.services.BaseEntryService;
 import com.kaltura.netkit.services.api.ott.phoenix.session.OttSessionProvider;
 import com.kaltura.netkit.services.api.ovp.session.OvpSessionProvider;
 import com.kaltura.netkit.utils.ErrorElement;
+import com.kaltura.netkit.utils.NKLog;
 import com.kaltura.netkit.utils.OnCompletion;
 import com.kaltura.netkit.utils.OnRequestCompletion;
 
@@ -45,6 +44,8 @@ import static junit.framework.Assert.fail;
 @RunWith(AndroidJUnit4.class)
 public class SessionProviderAndroidTest extends BaseTest {
 
+    private static final NKLog log = NKLog.get("SessionProviderAndroidTest");
+
     int singleTestWaitCount;
 
     @Test
@@ -56,7 +57,7 @@ public class SessionProviderAndroidTest extends BaseTest {
             @Override
             public void onComplete(PrimitiveResult response) {
                 if (response.error != null) {
-                    Log.e("testOttSessionProvider", "failed to establish a session: " + response.error.getMessage());
+                    log.e("failed to establish a session: " + response.error.getMessage());
                     singleTestWaitCount--;
                     resume();
                 } else {
@@ -78,7 +79,7 @@ public class SessionProviderAndroidTest extends BaseTest {
                                         @Override
                                         public void onComplete(ResultElement<PKMediaEntry> response) {
                                             if (response != null && response.isSuccess()) {
-                                                Log.i("testOttSessionProvider", "we have mediaEntry");
+                                                log.i("testOttSessionProvider", "we have mediaEntry");
                                                 assertTrue(response.getResponse().getId().equals(MediaId));
                                                 assertTrue(response.getResponse().getSources().size() == 1);
                                                 assertTrue(response.getResponse().getMediaType().equals(PKMediaEntry.MediaEntryType.Unknown));
@@ -103,7 +104,7 @@ public class SessionProviderAndroidTest extends BaseTest {
             @Override
             public void onComplete(PrimitiveResult response) {
                 if (response.error != null) {
-                    Log.e("testOttSessionProvider", "failed to establish a session: " + response.error.getMessage());
+                    log.e("testOttSessionProvider", "failed to establish a session: " + response.error.getMessage());
                     resume();
                 } else {
                     ottSessionProvider.getSessionToken(new OnCompletion<PrimitiveResult>() {
@@ -141,7 +142,7 @@ public class SessionProviderAndroidTest extends BaseTest {
             @Override
             public void onComplete(PrimitiveResult response) {
                 if (response.error != null) {
-                    Log.e("testAnonymousSession", "failed to establish anonymous session: " + response.error.getMessage());
+                    log.e("testAnonymousSession", "failed to establish anonymous session: " + response.error.getMessage());
                     fail("Anonymous session creation failed: "+response.error.getMessage());
                     singleTestWaitCount--;
                 } else {
@@ -151,7 +152,7 @@ public class SessionProviderAndroidTest extends BaseTest {
                             assertNotNull(response.getResult());
                             assertFalse(response.getResult().equals(""));
 
-                            Log.e("testAnonymousSession", "get ks = " + response.getResult());
+                            log.e("testAnonymousSession", "get ks = " + response.getResult());
                             ottSessionProvider.endSession(new OnCompletion<BaseResult>() {
                                 @Override
                                 public void onComplete(BaseResult response) {
@@ -168,7 +169,7 @@ public class SessionProviderAndroidTest extends BaseTest {
                                                 @Override
                                                 public void onComplete(ResultElement<PKMediaEntry> response) {
                                                     assertTrue(response != null && response.isSuccess());
-                                                    Log.i("testOttSessionProvider", "we have mediaEntry");
+                                                    log.i("testOttSessionProvider", "we have mediaEntry");
                                                     assertTrue(response.getResponse().getId().equals(MediaId));
                                                     assertTrue(response.getResponse().getSources().size() == 1);
                                                     assertTrue(response.getResponse().getMediaType().equals(PKMediaEntry.MediaEntryType.Unknown));
@@ -196,7 +197,7 @@ public class SessionProviderAndroidTest extends BaseTest {
             @Override
             public void onComplete(PrimitiveResult response) {
                 if (response.error != null) {
-                    Log.e("testAnonymousSession", "failed to establish anonymous session: " + response.error.getMessage());
+                    log.e("testAnonymousSession", "failed to establish anonymous session: " + response.error.getMessage());
 
                     if (response.error == ErrorElement.SessionError) {
                         fail("should have logged ");
@@ -209,7 +210,7 @@ public class SessionProviderAndroidTest extends BaseTest {
                             assertNotNull(response.getResult());
                             assertFalse(response.getResult().equals(""));
 
-                            Log.e("testAnonymousSession", "get ks = " + response.getResult());
+                            log.e("testAnonymousSession", "get ks = " + response.getResult());
                             ottSessionProvider.endSession(new OnCompletion<BaseResult>() {
                                 @Override
                                 public void onComplete(BaseResult response) {
@@ -275,7 +276,7 @@ public class SessionProviderAndroidTest extends BaseTest {
                                         @Override
                                         public void onComplete(ResultElement<PKMediaEntry> response) {
                                             if (response != null && response.isSuccess()) {
-                                                Log.i("testOvpSessionProvider", "we have mediaEntry");
+                                                log.i("testOvpSessionProvider", "we have mediaEntry");
                                                 assertTrue(response.getResponse().getId().equals(NonDRMEntryId));
                                                 // Assert.assertTrue(response.getResponse().getSources().size() == 1);
                                             }
@@ -300,7 +301,7 @@ public class SessionProviderAndroidTest extends BaseTest {
             @Override
             public void onComplete(PrimitiveResult response) {
                 if (response.error != null) {
-                    Log.e("testAnonymousSession", "failed to establish anonymous session: " + response.error.getMessage());
+                    log.e("testAnonymousSession", "failed to establish anonymous session: " + response.error.getMessage());
                     fail("failed to create anonymous session: "+response.error.getMessage());
 
                 } else {
@@ -310,7 +311,7 @@ public class SessionProviderAndroidTest extends BaseTest {
                             assertNotNull(response.getResult());
                             assertFalse(response.getResult().equals(""));
 
-                            Log.e("testAnonymousSession", "get ks = " + response.getResult());
+                            log.e("testAnonymousSession", "get ks = " + response.getResult());
                             //todo: change to another BE call
                             /*new KalturaOvpMediaProvider()
                                     .setSessionProvider(ovpSessionProvider)
@@ -319,7 +320,7 @@ public class SessionProviderAndroidTest extends BaseTest {
                                         @Override
                                         public void onComplete(ResultElement<PKMediaEntry> response) {
                                             if (response != null && response.isSuccess()) {
-                                                Log.i("testOvpSessionProvider", "we have mediaEntry");
+                                                log.i("testOvpSessionProvider", "we have mediaEntry");
                                                 assertTrue(response.getResponse().getId().equals(NonDRMEntryId));
                                             }
                                             resume();
@@ -343,7 +344,7 @@ public class SessionProviderAndroidTest extends BaseTest {
             public void onComplete(PrimitiveResult response) {
                 if (response.error != null) {
                     assertTrue(response.error.equals(ErrorElement.SessionError));
-                    Log.i("testOvpSPError", response.error.getCode() + ", " + response.error.getMessage());
+                    log.i("testOvpSPError", response.error.getCode() + ", " + response.error.getMessage());
 
                     ovpSessionProvider.setBaseUrl("http://www.kaltura.whatever/api_v3/");
                     ovpSessionProvider.startSession(OvpLoginId, OvpPassword, OvpPartnerId, new OnCompletion<PrimitiveResult>() {
@@ -435,7 +436,7 @@ public class SessionProviderAndroidTest extends BaseTest {
                                                 }).build());
 
                                     } else {
-                                        Log.i(TAG, "got an error: " + response.error.getMessage());
+                                        log.i(TAG, "got an error: " + response.error.getMessage());
                                         fail("failed to end session");
                                         resume();
                                     }

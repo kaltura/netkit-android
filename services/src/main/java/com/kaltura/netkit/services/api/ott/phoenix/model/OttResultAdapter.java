@@ -1,7 +1,5 @@
 package com.kaltura.netkit.services.api.ott.phoenix.model;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -10,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.kaltura.netkit.connect.response.BaseResult;
 import com.kaltura.netkit.utils.ErrorElement;
+import com.kaltura.netkit.utils.NKLog;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -25,6 +24,9 @@ import java.lang.reflect.Type;
  * @hide
  */
 public class OttResultAdapter implements JsonDeserializer<BaseResult> {
+
+    private static final NKLog log = NKLog.get("OttResultAdapter");
+
     @Override
     public BaseResult deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
@@ -71,7 +73,7 @@ public class OttResultAdapter implements JsonDeserializer<BaseResult> {
                     Class clz = Class.forName(clzName);
                     baseResult = (BaseResult) new Gson().fromJson(result, clz);
                 } catch (ClassNotFoundException e) {
-                    Log.e("OttResultAdapter","can't find class "+objectType+ " in the provided package\n ");
+                    log.e("can't find class "+objectType+ " in the provided package\n ");
                     e.printStackTrace();
                 }
             }
