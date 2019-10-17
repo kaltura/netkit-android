@@ -436,7 +436,7 @@ public class SessionProviderAndroidTest extends BaseTest {
                                                 }).build());
 
                                     } else {
-                                        log.i(TAG, "got an error: " + response.error.getMessage());
+                                        log.i("got an error: " + response.error.getMessage());
                                         fail("failed to end session");
                                         resume();
                                     }
