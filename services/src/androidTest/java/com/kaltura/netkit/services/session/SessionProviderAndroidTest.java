@@ -57,7 +57,7 @@ public class SessionProviderAndroidTest extends BaseTest {
             @Override
             public void onComplete(PrimitiveResult response) {
                 if (response.error != null) {
-                    log.e("failed to establish a session: " + response.error.getMessage());
+                    log.e("testOttSessionProvider", "failed to establish a session: " + response.error.getMessage());
                     singleTestWaitCount--;
                     resume();
                 } else {
