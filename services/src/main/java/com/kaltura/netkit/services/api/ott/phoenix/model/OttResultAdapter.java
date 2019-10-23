@@ -73,7 +73,7 @@ public class OttResultAdapter implements JsonDeserializer<BaseResult> {
                     Class clz = Class.forName(clzName);
                     baseResult = (BaseResult) new Gson().fromJson(result, clz);
                 } catch (ClassNotFoundException e) {
-                    log.e("OttResultAdapter", "can't find class "+ objectType + " in the provided package\n ");
+                    log.e("can't find class "+ objectType + " in the provided package\n ");
                     e.printStackTrace();
                 }
             }
