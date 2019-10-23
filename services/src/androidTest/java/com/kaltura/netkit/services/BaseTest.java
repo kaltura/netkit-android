@@ -1,6 +1,6 @@
 package com.kaltura.netkit.services;
 
-import android.util.Log;
+import com.kaltura.netkit.utils.NKLog;
 
 import org.junit.After;
 
@@ -13,22 +13,18 @@ import java.util.concurrent.CountDownLatch;
 
 public class BaseTest {
 
+    private static final NKLog log = NKLog.get("BaseTest");
+
     protected CountDownLatch testWaitCount;
-    protected String TAG = "BaseTest";
     Object syncObject = new Object();
 
-    public BaseTest() {
-    }
-
-    public BaseTest(String tag) {
-        this.TAG = tag;
-    }
+    public BaseTest() { }
 
     protected void resume() {
         if (testWaitCount != null) {
             synchronized (syncObject) {
                 testWaitCount.countDown();
-                Log.d(TAG, "count down reduced to " + testWaitCount.getCount());
+                log.d("count down reduced to " + testWaitCount.getCount());
             }
         }
     }
@@ -48,7 +44,7 @@ public class BaseTest {
         }
         try {
             testWaitCount.await(/*10000, TimeUnit.MILLISECONDS*/);
-            Log.d(TAG, "count down set for " + count);
+            log.d("count down set for " + count);
 
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -1,9 +1,9 @@
 package com.kaltura.netkit.services.api.ovp.services;
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.kaltura.netkit.connect.request.RequestBuilder;
+import com.kaltura.netkit.utils.NKLog;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,7 +15,7 @@ import java.net.URLDecoder;
 
 public class LiveStatsService {
 
-    private static final String TAG = "LiveStatsService";
+    private static final NKLog log = NKLog.get("LiveStatsService");
 
     public static RequestBuilder sendLiveStatsEvent(String baseUrl, int partnerId, int eventType, int eventIndex, long bufferTime, long bitrate,
                                                     String sessionId, long startTime, String entryId, boolean isLive, String clientVer, String deliveryType) {
@@ -51,9 +51,9 @@ public class LiveStatsService {
             URL url = new URL(URLDecoder.decode(builder.build().toString(), "UTF-8"));
             return url.toString();
         } catch (java.io.UnsupportedEncodingException ex) {
-            Log.d(TAG, "UnsupportedEncodingException: ");
+            log.e("UnsupportedEncodingException: ");
         } catch (MalformedURLException rx) {
-            Log.d(TAG, "MalformedURLException: ");
+            log.e("MalformedURLException: ");
         }
         return builder.build().toString();
     }
