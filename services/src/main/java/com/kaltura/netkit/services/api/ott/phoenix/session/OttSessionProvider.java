@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.util.Base64;
-import android.util.Log;
 
 import com.kaltura.netkit.connect.response.BaseResult;
 import com.kaltura.netkit.connect.response.PrimitiveResult;
@@ -20,6 +19,7 @@ import com.kaltura.netkit.services.api.ott.phoenix.services.PhoenixSessionServic
 import com.kaltura.netkit.connect.executor.APIOkRequestsExecutor;
 import com.kaltura.netkit.utils.ErrorElement;
 import com.kaltura.netkit.connect.request.MultiRequestBuilder;
+import com.kaltura.netkit.utils.NKLog;
 import com.kaltura.netkit.utils.OnCompletion;
 import com.kaltura.netkit.utils.OnRequestCompletion;
 import com.kaltura.netkit.connect.response.ResponseElement;
@@ -38,7 +38,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class OttSessionProvider extends BaseSessionProvider {
 
-    private static final String TAG = "BaseResult";
+    private static final NKLog log = NKLog.get("OttSessionProvider");
+
 
     private static final long TimeDelta = 2 * 60 * 60;//2 hours in seconds - default refresh delta for 24h session
     private static final int DeltaPercent = 12;
@@ -69,22 +70,22 @@ public class OttSessionProvider extends BaseSessionProvider {
         @Override
         public Boolean call() throws Exception {
             if(refreshToken == null){
-                Log.d(TAG, "refreshToken is not available, can't activate refresh");
+                log.d("refreshToken is not available, can't activate refresh");
                 onSessionRefreshTaskResults(new PrimitiveResult(ErrorElement.SessionError.addMessage(" FAILED TO RECOVER SESSION!!")));
                 return false;
             }
 
             if(refreshInProgress.get()){
-                Log.d(TAG, "refresh already in progress");
+                log.d("refresh already in progress");
                 return false;
             }
 
-            Log.d(TAG, "start running refresh token");
+            log.d("start running refresh token");
 
 
             if(refreshTaskFurure != null && refreshTaskFurure.isCancelled()){
                 refreshTaskFurure = null;
-                Log.d(TAG, "refresh operation got canceled");
+                log.d("refresh operation got canceled");
                 return false;
             }
 
@@ -248,11 +249,11 @@ public class OttSessionProvider extends BaseSessionProvider {
         ErrorElement error = null;
 
         if (response != null && response.isSuccess()) {
-            Log.d(TAG, "handleStartSession: response success, checking inner responses");
+            log.d("handleStartSession: response success, checking inner responses");
             List<BaseResult> responses = PhoenixParser.parse(response.getResponse()); // parses KalturaLoginResponse, KalturaSession
 
             if (responses.get(0).error != null) { //!- failed to login
-                Log.d(TAG, "handleStartSession: first response failure: "+responses.get(0).error);
+                log.d("handleStartSession: first response failure: "+responses.get(0).error);
 
                 //returns ErrorHelper error if recognizes code otherwise return SessionError
                 error = PhoenixErrorHelper.getErrorElement(responses.get(0).error.getCode(), responses.get(0).error.getMessage(), ErrorElement.SessionError);
@@ -263,7 +264,7 @@ public class OttSessionProvider extends BaseSessionProvider {
                 // session data is taken from second response since its common for both user/anonymous login
                 // and we need this response for the expiry.
                 if (responses.get(1).error == null) { // get session data success
-                    Log.d(TAG, "handleStartSession: second response success");
+                    log.d("handleStartSession: second response success");
 
                     KalturaSession session = (KalturaSession) responses.get(1);
                     setSession(session.getKs(), session.getExpiry(), session.getUserId()); // save new session
@@ -272,7 +273,7 @@ public class OttSessionProvider extends BaseSessionProvider {
                         completion.onComplete(new PrimitiveResult(session.getKs()));
                     }
                 } else {
-                    Log.d(TAG, "handleStartSession: second response failure: "+responses.get(1).error);
+                    log.d("handleStartSession: second response failure: "+responses.get(1).error);
 
                     error = ErrorElement.SessionError;
                 }
@@ -343,10 +344,10 @@ public class OttSessionProvider extends BaseSessionProvider {
                                     public void onComplete(ResponseElement response) {
                                         ErrorElement error = null;
                                         if (response != null && response.isSuccess()) {
-                                            Log.d(TAG, "endSession: logout user session success. clearing session data.");
+                                            log.d("endSession: logout user session success. clearing session data.");
                                         } else {
                                             error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("failed to end session");
-                                            Log.e(TAG, "endSession: session logout failed. clearing session data. " + error.getMessage());
+                                            log.e("endSession: session logout failed. clearing session data. " + error.getMessage());
                                         }
                                         OttSessionProvider.super.endSession();
                                         sessionUdid = null;
@@ -363,7 +364,7 @@ public class OttSessionProvider extends BaseSessionProvider {
             });
 
         } else {
-            Log.w(TAG, "endSession: but no active session available");
+            log.w("endSession: but no active session available");
             sessionUdid = null;
         }
     }
@@ -418,7 +419,7 @@ public class OttSessionProvider extends BaseSessionProvider {
                         if (response != null && response.isSuccess()) {
                             List<BaseResult> responses = PhoenixParser.parse(response.getResponse());
                             if (responses.get(0).error != null) {
-                                Log.e(TAG, "failed to refresh session. token may be invalid and cause access issues. ");
+                                log.e("failed to refresh session. token may be invalid and cause access issues. ");
                                 // session may have still time before it expires so actually if fails, do nothing.
 
                             } else {// refresh success
@@ -449,12 +450,12 @@ public class OttSessionProvider extends BaseSessionProvider {
      * submit task to refresh current session
      */
     private synchronized void submitRefreshSessionTask() {
-        Log.i(TAG, "submit refresh session task");
+        log.i("submit refresh session task");
         refreshTaskFurure = refreshExecutor.submit(refreshCallable);
     }
 
     private void cancelCurrentRefreshTask() {
-        Log.d(TAG, "cancelCurrentRefreshTask: Thread - "+Thread.currentThread().getId());
+        log.d("cancelCurrentRefreshTask: Thread - "+Thread.currentThread().getId());
 
         if(refreshTaskFurure != null && !refreshTaskFurure.isDone()){
             refreshTaskFurure.cancel(true);

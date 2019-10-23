@@ -1,7 +1,5 @@
 package com.kaltura.netkit.utils;
 
-import android.util.Log;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -12,19 +10,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class CallableLoader<T> implements Callable<T> {
 
+    private static final NKLog log = NKLog.get("CallableLoader");
+
     protected final String loadId = this.toString() + ":" + System.currentTimeMillis();
 
     protected OnCompletion completion;
     protected CountDownLatch waitCompletion;
 
-    protected String TAG;
     protected final Object syncObject = new Object();
     protected AtomicBoolean isCanceled = new AtomicBoolean(false);
 
 
     protected CallableLoader(String tag, OnCompletion completion) {
         this.completion = completion;
-        this.TAG = tag;
+
     }
 
     abstract protected T load() throws InterruptedException;
@@ -36,7 +35,7 @@ public abstract class CallableLoader<T> implements Callable<T> {
     protected void notifyCompletion() {
         if (waitCompletion != null) {
             synchronized (syncObject) {
-                Log.v(TAG, loadId + ": notifyCompletion: countDown =  " + waitCompletion.getCount());
+                log.v(loadId + ": notifyCompletion: countDown =  " + waitCompletion.getCount());
                 waitCompletion.countDown();
             }
         }
@@ -48,7 +47,7 @@ public abstract class CallableLoader<T> implements Callable<T> {
         }
 
         synchronized (syncObject) {
-            Log.i(TAG, loadId + ": waitCompletion: set new counDown " + (waitCompletion != null ? "already has counter " + waitCompletion.getCount() : ""));
+            log.i(loadId + ": waitCompletion: set new counDown " + (waitCompletion != null ? "already has counter " + waitCompletion.getCount() : ""));
             waitCompletion = new CountDownLatch(countDownLatch);
         }
         waitCompletion.await();
@@ -62,15 +61,15 @@ public abstract class CallableLoader<T> implements Callable<T> {
     @Override
     public T call() {
         if (isCanceled()) { // needed in case cancel done before callable started
-            Log.i(TAG, loadId + ": Loader call canceled");
+            log.i(loadId + ": Loader call canceled");
             return null;
         }
 
-        Log.i(TAG, loadId + ": Loader call started ");
+        log.i(loadId + ": Loader call started ");
 
         try {
             T result = load();
-            Log.i(TAG, loadId + ": load finished with no interruptions");
+            log.i(loadId + ": load finished with no interruptions");
             return result;
         } catch (InterruptedException e) {
             interrupted();
@@ -83,9 +82,7 @@ public abstract class CallableLoader<T> implements Callable<T> {
     }
 
     protected void interrupted() {
-        Log.i(TAG, loadId + ": loader operation interrupted ");
+        log.i(loadId + ": loader operation interrupted ");
         cancel();
     }
-
-
 }
