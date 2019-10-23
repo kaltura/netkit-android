@@ -1,14 +1,12 @@
 package com.kaltura.netkit.services.api.ott.phoenix.services;
 
-import android.text.TextUtils;
-import android.util.Log;
+
 
 import com.kaltura.netkit.connect.executor.APIOkRequestsExecutor;
 import com.kaltura.netkit.connect.response.PrimitiveResult;
 import com.kaltura.netkit.connect.response.ResponseElement;
-import com.kaltura.netkit.services.api.common.BaseSessionProvider;
-import com.kaltura.netkit.services.api.ott.phoenix.session.OttSessionProvider;
 import com.kaltura.netkit.utils.ErrorElement;
+import com.kaltura.netkit.utils.NKLog;
 import com.kaltura.netkit.utils.OnCompletion;
 import com.kaltura.netkit.utils.OnRequestCompletion;
 import com.kaltura.netkit.utils.SessionProvider;
@@ -19,7 +17,8 @@ import com.kaltura.netkit.utils.SessionProvider;
 
 public class OttPushNotificationProvider {
 
-    private static final String TAG = "OttPushProvider";
+    private static final NKLog log = NKLog.get("OttPushProvider");
+
     private static String apiBaseUrl = "";
     private SessionProvider sp;
 
@@ -45,10 +44,10 @@ public class OttPushNotificationProvider {
 
                                 ErrorElement error = null;
                                 if (response != null && response.isSuccess()) {
-                                    Log.d(TAG, "push token registartion : Succsess.");
+                                    log.d("push token registartion : Succsess.");
                                 } else {
                                     error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("Push Token Registration Failed");
-                                    Log.e(TAG, "push token reßgistartion : Failed with error - " + error.getMessage());
+                                    log.e("push token reßgistartion : Failed with error - " + error.getMessage());
                                 }
 
                             }
@@ -72,12 +71,12 @@ public class OttPushNotificationProvider {
 
                                 ErrorElement error = null;
                                 if (response != null && response.isSuccess()) {
-                                    Log.d(TAG, "addFollowTVSeries : Succsess.");
+                                    log.d("addFollowTVSeries : Succsess.");
                                     pushStateCallback.onComplete(response);
                                 } else {
                                     error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("Push Token states Failed");
                                     pushStateCallback.onComplete(response);
-                                    Log.e(TAG, "addFollowTVSeries : Failed with error - " + error.getMessage());
+                                    log.e("addFollowTVSeries : Failed with error - " + error.getMessage());
                                 }
 
                             }
@@ -100,12 +99,12 @@ public class OttPushNotificationProvider {
 
                                 ErrorElement error = null;
                                 if (response != null && response.isSuccess()) {
-                                    Log.d(TAG, "addFollowTVSeries : Succsess.");
+                                    log.d("addFollowTVSeries : Succsess.");
                                     pushStateCallback.onComplete(response);
                                 } else {
                                     error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("Push Token states Failed");
                                     pushStateCallback.onComplete(response);
-                                    Log.e(TAG, "addFollowTVSeries : Failed with error - " + error.getMessage());
+                                    log.e("addFollowTVSeries : Failed with error - " + error.getMessage());
                                 }
 
                             }
@@ -128,12 +127,12 @@ public class OttPushNotificationProvider {
 
                                 ErrorElement error = null;
                                 if (response != null && response.isSuccess()) {
-                                    Log.d(TAG, "push states : Succsess.");
+                                    log.d("push states : Succsess.");
                                     pushStateCallback.onComplete(response);
                                 } else {
                                     error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("Push Token states Failed");
                                     pushStateCallback.onComplete(response);
-                                    Log.e(TAG, "push states : Failed with error - " + error.getMessage());
+                                    log.e("push states : Failed with error - " + error.getMessage());
                                 }
 
                             }
@@ -156,14 +155,13 @@ public class OttPushNotificationProvider {
 
                                 ErrorElement error = null;
                                 if (response != null && response.isSuccess()) {
-                                    Log.d(TAG, "push state update : Succsess.");
+                                    log.d("push state update : Succsess.");
                                     pushStateCallback.onComplete(response);
                                 } else {
                                     pushStateCallback.onComplete(response);
                                     error = response.getError() != null ? response.getError() : ErrorElement.GeneralError.message("Push Token states Failed");
-                                    Log.e(TAG, "push state update : Failed with error - " + error.getMessage());
+                                    log.e("push state update : Failed with error - " + error.getMessage());
                                 }
-
                             }
                         }).build());
             }});

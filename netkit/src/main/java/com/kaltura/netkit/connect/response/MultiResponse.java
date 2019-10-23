@@ -1,6 +1,7 @@
 package com.kaltura.netkit.connect.response;
 
-import android.util.Log;
+
+import com.kaltura.netkit.utils.NKLog;
 
 import java.util.ArrayList;
 
@@ -9,6 +10,9 @@ import java.util.ArrayList;
  */
 
 public class MultiResponse extends ArrayList<BaseResult> {
+
+    private static final NKLog log = NKLog.get("MultiResponse");
+
     public MultiResponse(){
         super();
     }
@@ -22,7 +26,7 @@ public class MultiResponse extends ArrayList<BaseResult> {
         try {
             return get(i).error != null;
         } catch (IndexOutOfBoundsException e) {
-            Log.e("MultiResponse","failedOn: index " + i + " out of range");
+            log.e("failedOn: index " + i + " out of range");
             return true;
         }
     }
