@@ -121,12 +121,12 @@ public class ErrorElement {
     public static ErrorElement fromException(Exception exception) {
         switch (exception.getClass().getSimpleName()) {
             case "SocketTimeoutException":
-                return ErrorElement.ConnectionError.message("SocketTimeoutException Exception: " + exception.getMessage());
+                return new ErrorElement(ErrorElement.ConnectionError.getName(), "SocketTimeoutException Exception: " + ConnectionErrorCode);
             case "UnknownHostException":
-                return ErrorElement.ConnectionError.message("UnknownHostException Exception: " + exception.getMessage());
+                return new ErrorElement(ErrorElement.ConnectionError.getName(), "UnknownHostException Exception: " + ConnectionErrorCode);
 
             default:
-                return ErrorElement.GeneralError.message("Exception: " + exception.getMessage());
+                return new ErrorElement(ErrorElement.GeneralError.getName(), "Exception: " + GeneralErrorCode);
 
         }
     }
