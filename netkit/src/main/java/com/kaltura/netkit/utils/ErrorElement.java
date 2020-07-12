@@ -121,12 +121,13 @@ public class ErrorElement {
     public static ErrorElement fromException(Exception exception) {
         switch (exception.getClass().getSimpleName()) {
             case "SocketTimeoutException":
-                return new ErrorElement(ErrorElement.ConnectionError.getName(), "SocketTimeoutException Exception: " + ConnectionErrorCode);
+                return new ErrorElement(ErrorElement.ConnectionError.getName(), "SocketTimeoutException Exception: " + ConnectionErrorCode, exception);
             case "UnknownHostException":
-                return new ErrorElement(ErrorElement.ConnectionError.getName(), "UnknownHostException Exception: " + ConnectionErrorCode);
-
+                return new ErrorElement(ErrorElement.ConnectionError.getName(), "UnknownHostException Exception: " + ConnectionErrorCode, exception);
+            case "SSLException":
+                return new ErrorElement(ErrorElement.ConnectionError.getName(), "SSLException: android.os=" + android.os.Build.VERSION.SDK_INT + ": " + ConnectionErrorCode, exception);
             default:
-                return new ErrorElement(ErrorElement.GeneralError.getName(), "Exception: " + GeneralErrorCode);
+                return new ErrorElement(ErrorElement.GeneralError.getName(), "Exception: " + GeneralErrorCode, exception);
 
         }
     }
