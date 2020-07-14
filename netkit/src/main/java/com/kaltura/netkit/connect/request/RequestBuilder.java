@@ -39,7 +39,7 @@ public class RequestBuilder<T extends RequestBuilder> {
 
     public RequestBuilder() {
         headers = new HashMap();
-        headers.put("ContentType", "application/json");
+        headers.put("Content-Type", "application/json");
     }
 
     public T url(String url) {
