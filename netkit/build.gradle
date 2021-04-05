@@ -35,8 +35,8 @@ tasks.withType(Javadoc) {
 }
 
 dependencies {
-    api 'com.google.code.gson:gson:2.8.5'
-    implementation 'androidx.annotation:annotation:1.1.0'
+    api 'com.google.code.gson:gson:2.8.6'
+    implementation 'androidx.annotation:annotation:1.2.0'
     implementation 'com.squareup.okhttp3:okhttp:3.12.11'
  }
 
@@ -45,3 +45,5 @@ repositories {
     jcenter()
     maven { url "https://jitpack.io" }
 }
+
+apply from: './gradle-mvn-push.gradle'
