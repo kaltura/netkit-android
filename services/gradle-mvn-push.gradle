@@ -31,6 +31,7 @@ afterEvaluate { project ->
 
                 pom.groupId = GROUP
                 pom.artifactId = POM_ARTIFACT_ID
+                VERSION_NAME = netkitVersion
                 pom.version = VERSION_NAME
 
                 repository(url: getReleaseRepositoryUrl()) {
