@@ -46,6 +46,7 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 
+
 if (!ext.netkitVersion.contains('dev')) {
     apply from: './gradle-mvn-push.gradle'
 }
