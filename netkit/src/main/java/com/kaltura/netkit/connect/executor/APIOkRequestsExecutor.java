@@ -378,7 +378,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
         BodyBuilder Default = new BodyBuilder() {
             @Override
             public RequestBody build(RequestElement requestElement) {
-                return requestElement.getBody() != null ? RequestBody.create(JSON_MediaType, requestElement.getBody().getBytes()) : null;
+                return requestElement.getBody() != null ? RequestBody.create(requestElement.getBody().getBytes(), JSON_MediaType) : null;
             }
         };
     }

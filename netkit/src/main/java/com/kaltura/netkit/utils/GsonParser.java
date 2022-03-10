@@ -69,7 +69,6 @@ public class GsonParser {
     }
 
     public static JsonElement toJson(String jsonString) throws JsonSyntaxException{
-        JsonParser parser = new JsonParser();
-        return parser.parse(jsonString);
+        return JsonParser.parseString(jsonString);
     }
 }
