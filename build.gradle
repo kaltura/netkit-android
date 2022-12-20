@@ -28,7 +28,7 @@ nexusPublishing {
         sonaType {
             nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
-            packageGroup = GROUP
+            packageGroup = 'com.kaltura'
             username = System.getenv('OSSRH_USERNAME')
             password = System.getenv('OSSRH_PASSWORD')
         }
