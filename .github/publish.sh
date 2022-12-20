@@ -163,5 +163,5 @@ EOF
   checkout
   set_version
   build
-  release_and_tag
-  notify_teams
+  #release_and_tag
+  #notify_teams
