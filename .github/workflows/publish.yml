@@ -15,7 +15,7 @@ on:
         description: "New Netkit Version (Without 'v' Ex: 1.0.0)"
         required: true
         type: string
-      playkit_prev_version:
+      prev_version:
         description: "Previous Netkit Version (Without 'v' Ex: 1.0.0): Important for Patch and Update"
         required: true
         type: string
@@ -23,7 +23,7 @@ on:
 env:
   RELEASE_TYPE: ${{ inputs.release_type }}
   NEW_VERSION: ${{ inputs.new_version }}
-  PLAYKIT_PREV_VERSION: ${{ inputs.playkit_prev_version }}
+  PREV_VERSION: ${{ inputs.prev_version }}
   REPO_NAME: ${{ github.event.repository.name }}
   MODULE_NAME: "netkit"
 
@@ -55,7 +55,7 @@ jobs:
       - name: Run publish Script
         run: |
           RELEASE_TYPE=${RELEASE_TYPE} NEW_VERSION=${NEW_VERSION}
-          PLAYKIT_PREV_VERSION=${PLAYKIT_PREV_VERSION} REPO_NAME=${REPO_NAME}
+          PREV_VERSION=${PREV_VERSION} REPO_NAME=${REPO_NAME}
           TOKEN=${{ secrets.GITHUB_TOKEN }} MODULE_NAME=${MODULE_NAME} TEAMS_WEBHOOK=${{ secrets.TEAMSWEBHOOK }} bash .github/publish.sh
 
       - name: Delete secring file
