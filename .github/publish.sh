@@ -21,35 +21,9 @@ set_version() {
     echo Setting version of "$REPO_NAME" to "$NEW_VERSION"
 
     # Changing the version in version.gradle file
-    if [ "$MODULE_NAME" = "netkit" ]; then
-       perl -pi -e "s/^ext.netkitVersion.*$/ext.netkitVersion = '$NEW_VERSION'/" $NETKIT_SERVICES_VERSION_FILE
-    fi
 
+    perl -pi -e "s/^ext.netkitVersion.*$/ext.netkitVersion = '$NEW_VERSION'/" $NETKIT_SERVICES_VERSION_FILE
     perl -pi -e "s/^ext.netkitVersion.*$/ext.netkitVersion = '$NEW_VERSION'/" $VERSION_FILE
-    perl -pi -e "s/^ext.dtglibVersion.*$/ext.dtglibVersion = '$NEW_VERSION'/" $VERSION_FILE
-    perl -pi -e "s/^ext.playkitVersion.*$/ext.playkitVersion = '$NEW_VERSION'/" $VERSION_FILE
-    perl -pi -e "s/^ext.libVersion.*$/ext.libVersion = '$NEW_VERSION'/" $VERSION_FILE
-
-    # Changing the version in build.gradle file
-    if [[ "$RELEASE_TYPE" = "Patch" || "$RELEASE_TYPE" = "Update" ]]; then
-       echo "RELEASE_TYPE = '$RELEASE_TYPE'"
-       perl -pi -e "s/playkit:playkit:$PLAYKIT_PREV_VERSION/playkit:playkit:$NEW_VERSION/" $BUILD_GRADLE
-       perl -pi -e "s/playkit:playkitproviders:$PLAYKIT_PREV_VERSION/playkit:playkitproviders:$NEW_VERSION/" $BUILD_GRADLE
-       perl -pi -e "s/playkit:kavaplugin:$PLAYKIT_PREV_VERSION/playkit:kavaplugin:$NEW_VERSION/" $BUILD_GRADLE
-       perl -pi -e "s/playkit:broadpeakplugin:$PLAYKIT_PREV_VERSION/playkit:broadpeakplugin:$NEW_VERSION/" $BUILD_GRADLE
-       perl -pi -e "s/playkit:smartswitchplugin:$PLAYKIT_PREV_VERSION/playkit:smartswitchplugin:$NEW_VERSION/" $BUILD_GRADLE
-       perl -pi -e "s/player:tvplayer:$PLAYKIT_PREV_VERSION/player:tvplayer:$NEW_VERSION/" $BUILD_GRADLE
-       perl -pi -e "s/dtg:dtglib:$DTG_PREV_VERSION/dtg:dtglib:$DTG_DEP_VERSION/" $BUILD_GRADLE
-    fi
-
-    if [ "$RELEASE_TYPE" = "Full" ]; then
-       echo "RELEASE_TYPE = '$RELEASE_TYPE'"
-       perl -pi -e "s/:playkit-android:dev-SNAPSHOT/.playkit:playkit:$NEW_VERSION/" $BUILD_GRADLE
-       perl -pi -e "s/:playkit-android-providers:develop-SNAPSHOT/.playkit:playkitproviders:$NEW_VERSION/" $BUILD_GRADLE
-       perl -pi -e "s/:playkit-android-kava:develop-SNAPSHOT/.playkit:kavaplugin:$NEW_VERSION/" $BUILD_GRADLE
-       perl -pi -e "s/:kaltura-player-android:develop-SNAPSHOT/.player:tvplayer:$NEW_VERSION/" $BUILD_GRADLE
-       perl -pi -e "s/:playkit-dtg-android:current-SNAPSHOT/.dtg:dtglib:$DTG_DEP_VERSION/" $BUILD_GRADLE
-    fi
 }
 
 build() {
@@ -82,12 +56,12 @@ EOF
     fi
 
     if [ "$RELEASE_TYPE" = "Update" ]; then
-                  JSON_BODY="### Plugin Playkit Support\n\n"
+                  JSON_BODY="### Netkit Plugin Support\n\n"
                   JSON_BODY="$JSON_BODY$NEW_TAG\n\n"
       JSON_BODY="$JSON_BODY * upgrade to $NEW_TAG\n\n"
       JSON_BODY="$JSON_BODY #### Gradle\n\n"
-                  JSON_BODY="$JSON_BODY * implementation 'com.kaltura.playkit:"
-      JSON_BODY="$JSON_BODY$MODULE_NAME:$NEW_VERSION"
+                  JSON_BODY="$JSON_BODY * implementation 'com.kaltura.netkit:netkit-core"
+      JSON_BODY="$NEW_VERSION"
       JSON_BODY="$JSON_BODY'"
 
 
@@ -171,7 +145,6 @@ EOF
   REPO_URL=https://github.com/kaltura/$REPO_NAME
   NEW_VERSION=$NEW_VERSION
   PLAYKIT_PREV_VERSION=$PLAYKIT_PREV_VERSION
-  DTG_DEP_VERSION=$DTG_DEP_VERSION
   TOKEN=$TOKEN
   TEAMS_WEBHOOK=$TEAMS_WEBHOOK
 
@@ -186,22 +159,6 @@ EOF
   if [ "$RELEASE_TYPE" = "Patch" ]; then
   BRANCH_NAME="patch/$NEW_TAG"
   fi
-
-#  echo "BRANCH_NAME = '$BRANCH_NAME'"
-#  echo "RELEASE_TYPE = '$RELEASE_TYPE'"
-#  echo "REPO_NAME = '$REPO_NAME'"
-#  echo "MODULE_NAME = '$MODULE_NAME'"
-#  echo "VERSION_FILE = '$VERSION_FILE'"
-#  echo "BUILD_GRADLE = '$BUILD_GRADLE'"
-#  echo "REPO_URL = '$REPO_URL'"
-#  echo "NEW_VERSION = '$NEW_VERSION'"
-#  echo "PLAYKIT_PREV_VERSION = '$PLAYKIT_PREV_VERSION'"
-#  echo "DTG_DEP_VERSION = '$DTG_DEP_VERSION'"
-#  echo "NEW_TAG = '$NEW_TAG'"
-#  echo "PREV_TAG = '$PREV_TAG'"
-#  echo "RELEASE_URL = '$RELEASE_URL'"
-#  echo "TOKEN = '$TOKEN'"
-#  echo "TEAMS_WEBHOOK = '$TEAMS_WEBHOOK'"
 
   checkout
   set_version
