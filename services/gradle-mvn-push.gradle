@@ -16,11 +16,11 @@ def getSnapshotRepositoryUrl() {
 }
 
 def getRepositoryUsername() {
-    return System.getenv("NEXUS_USERNAME")
+    return System.getenv("OSSRH_USERNAME")
 }
 
 def getRepositoryPassword() {
-    return System.getenv("NEXUS_PASSWORD")
+    return System.getenv("OSSRH_PASSWORD")
 }
 
 afterEvaluate { project ->
@@ -75,9 +75,9 @@ afterEvaluate { project ->
     }
 
     signing {
-        allprojects { ext."signing.keyId" = System.getenv("MAVEN_KEYID") }
-        allprojects { ext."signing.password" = System.getenv("MAVEN_PASSWORD") }
-        allprojects { ext."signing.secretKeyRingFile" = System.getenv("MAVEN_SECRING_PATH") }
+        allprojects { ext."signing.keyId" = System.getenv("SIGNING_KEY_ID") }
+        allprojects { ext."signing.password" = System.getenv("SIGNING_PASSWORD") }
+        allprojects { ext."signing.secretKeyRingFile" = SECRING_PATH }
 
         required { isReleaseBuild() && gradle.taskGraph.hasTask("publish") }
         sign publishing.publications.mavenJava
