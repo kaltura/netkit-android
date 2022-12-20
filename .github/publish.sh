@@ -74,7 +74,7 @@ release_and_tag() {
 cat << EOF > ./post.json
 {
       "name": "$NEW_TAG",
-      "body": "## Changes from [$PREV_TAG](https://github.com/GouravSna/$REPO_NAME/releases/tag/$PREV_TAG)\n\nTBD",
+      "body": "## Changes from [$PREV_TAG](https://github.com/kaltura/$REPO_NAME/releases/tag/$PREV_TAG)\n\nTBD",
       "tag_name": "$NEW_TAG",
       "target_commitish": "$BRANCH_NAME"
 }
@@ -94,7 +94,7 @@ EOF
 cat << EOF > ./post.json
 {
       "name": "$NEW_TAG",
-      "body": "## Changes from [$PREV_TAG](https://github.com/GouravSna/$REPO_NAME/releases/tag/$PREV_TAG)\n\n$JSON_BODY",
+      "body": "## Changes from [$PREV_TAG](https://github.com/kaltura/$REPO_NAME/releases/tag/$PREV_TAG)\n\n$JSON_BODY",
       "tag_name": "$NEW_TAG",
       "target_commitish": "$BRANCH_NAME"
 }
@@ -104,7 +104,7 @@ EOF
     cat post.json
 
     curl --request POST \
-         --url https://api.github.com/repos/GouravSna/GH-TEST/releases \
+         --url https://api.github.com/repos/kaltura/"$REPO_NAME"/releases \
          --header "authorization: Bearer $TOKEN" \
          --header 'content-type: application/json' \
          -d@post.json
@@ -168,7 +168,7 @@ EOF
   BUILD_GRADLE=$MODULE_NAME/build.gradle
   NETKIT_SERVICES_VERSION_FILE="services/version.gradle" #Special variable only for netkit to change the version file version
 
-  REPO_URL=https://github.com/GouravSna/$REPO_NAME
+  REPO_URL=https://github.com/kaltura/$REPO_NAME
   NEW_VERSION=$NEW_VERSION
   PLAYKIT_PREV_VERSION=$PLAYKIT_PREV_VERSION
   DTG_DEP_VERSION=$DTG_DEP_VERSION
