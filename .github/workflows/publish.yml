@@ -26,6 +26,10 @@ env:
   PREV_VERSION: ${{ inputs.prev_version }}
   REPO_NAME: ${{ github.event.repository.name }}
   MODULE_NAME: "netkit"
+  NEXUS_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+  NEXUS_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+  SIGNING_KEYID: ${{ secrets.SIGNING_KEY_ID }}
+  SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
 jobs:
 
