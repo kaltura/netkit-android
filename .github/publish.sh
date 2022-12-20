@@ -28,7 +28,7 @@ set_version() {
 
 build() {
     chmod +x gradlew
-    ./gradlew netkit:publishToSonatype #closeAndReleaseSonatypeStagingRepository
+    ./gradlew publishToSonatype #closeAndReleaseSonatypeStagingRepository
 }
 
 release_and_tag() {
