@@ -58,8 +58,8 @@ jobs:
 
       - name: list dir
         run: |
-          echo("current dir " + $PWD)
-          echo "ls -R"
+          $PWD
+          ls -R
 
       # - name: Run publish Script
       #   run: |
