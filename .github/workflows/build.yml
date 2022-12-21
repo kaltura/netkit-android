@@ -5,14 +5,14 @@ on:
     branches: [ "develop", "master", "main" ]
   pull_request:
     branches: [ "develop", "master", "main" ]
+  workflow_call:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-
-  BuildCheck:
+  gradle-build:
     environment: Build
     runs-on: ubuntu-latest
 
