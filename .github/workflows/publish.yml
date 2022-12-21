@@ -56,10 +56,10 @@ jobs:
       # - name: Gradle Build...
       #   run: ./gradlew build
 
-      - name: list dir
+      - name: list
         run: |
-          PWD
           ls
+          pwd
           ls -R
 
       # - name: Run publish Script
