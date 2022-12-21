@@ -32,7 +32,13 @@ allprojects {
 nexusPublishing {
     repositories {
         sonaType {
-            sonatype()
+            println("nexusUserName = " + nexusUserName)
+            println("nexusPassword = " + nexusPassword)
+            println("signingKeyId = " + signingKeyId)
+            println("signingPassword = " + signingPassword)
+            println("SECRING_PATH = " + SECRING_PATH)
+            nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
             packageGroup = GROUP
             username = nexusUserName
             password = nexusPassword

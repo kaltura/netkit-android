@@ -80,7 +80,7 @@ afterEvaluate { project ->
         allprojects { ext."signing.secretKeyRingFile" = SECRING_PATH }
 
         required { isReleaseBuild() && gradle.taskGraph.hasTask("publish") }
-        sign publishing.publications.mavenJava
+        sign publishing.publications
     }
 
     task androidJavadocs(type: Javadoc) {
