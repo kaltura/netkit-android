@@ -27,7 +27,7 @@ set_version() {
 
 build() {
     chmod +x gradlew
-    ./gradlew publishToSonatype #closeAndReleaseSonatypeStagingRepository
+    ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
 }
 
 release_and_tag() {
@@ -162,5 +162,5 @@ EOF
   checkout
   set_version
   build
-  #release_and_tag
-  #notify_teams
+  release_and_tag
+  notify_teams
