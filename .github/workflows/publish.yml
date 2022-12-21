@@ -56,11 +56,16 @@ jobs:
       - name: Gradle Build...
         run: ./gradlew build
 
-      - name: Run publish Script
+      - name: list dir
         run: |
-          RELEASE_TYPE=${RELEASE_TYPE} NEW_VERSION=${NEW_VERSION}
-          PREV_VERSION=${PREV_VERSION} REPO_NAME=${REPO_NAME}
-          TOKEN=${{ secrets.GITHUB_TOKEN }} MODULE_NAME=${MODULE_NAME} TEAMS_WEBHOOK=${{ secrets.TEAMSWEBHOOK }} bash .github/publish.sh
+          echo("current dir " + $PWD)
+          echo "ls -R"
+
+      # - name: Run publish Script
+      #   run: |
+      #     RELEASE_TYPE=${RELEASE_TYPE} NEW_VERSION=${NEW_VERSION}
+      #     PREV_VERSION=${PREV_VERSION} REPO_NAME=${REPO_NAME}
+      #     TOKEN=${{ secrets.GITHUB_TOKEN }} MODULE_NAME=${MODULE_NAME} TEAMS_WEBHOOK=${{ secrets.TEAMSWEBHOOK }} bash .github/publish.sh
 
       - name: Delete secring file
         run: |
