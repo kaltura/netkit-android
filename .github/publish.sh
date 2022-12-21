@@ -21,14 +21,13 @@ set_version() {
     echo Setting version of "$REPO_NAME" to "$NEW_VERSION"
 
     # Changing the version in version.gradle file
-
     perl -pi -e "s/^ext.netkitVersion.*$/ext.netkitVersion = '$NEW_VERSION'/" $NETKIT_SERVICES_VERSION_FILE
     perl -pi -e "s/^ext.netkitVersion.*$/ext.netkitVersion = '$NEW_VERSION'/" $VERSION_FILE
 }
 
 build() {
     chmod +x gradlew
-    ./gradlew publishToSonatype --info #closeAndReleaseSonatypeStagingRepository
+    ./gradlew publishToSonatype #closeAndReleaseSonatypeStagingRepository
 }
 
 release_and_tag() {

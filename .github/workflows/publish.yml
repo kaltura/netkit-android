@@ -25,15 +25,17 @@ env:
   NEW_VERSION: ${{ inputs.new_version }}
   PREV_VERSION: ${{ inputs.prev_version }}
   REPO_NAME: ${{ github.event.repository.name }}
-  MODULE_NAME: "netkit"
   NEXUS_USERNAME: ${{ secrets.OSSRH_USERNAME }}
   NEXUS_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
   SIGNING_KEYID: ${{ secrets.SIGNING_KEY_ID }}
   SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+  MODULE_NAME: "netkit"
 
 jobs:
+  build:
+    uses: ./.github/workflows/build.yml
 
-  MavenRelease:
+  maven-release:
     environment: Release
     runs-on: ubuntu-latest
 
@@ -60,7 +62,8 @@ jobs:
         run: |
           RELEASE_TYPE=${RELEASE_TYPE} NEW_VERSION=${NEW_VERSION}
           PREV_VERSION=${PREV_VERSION} REPO_NAME=${REPO_NAME}
-          TOKEN=${{ secrets.GITHUB_TOKEN }} MODULE_NAME=${MODULE_NAME} TEAMS_WEBHOOK=${{ secrets.TEAMSWEBHOOK }} bash .github/publish.sh
+          TOKEN=${{ secrets.GITHUB_TOKEN }} MODULE_NAME=${MODULE_NAME} 
+          TEAMS_WEBHOOK=${{ secrets.TEAMS_WEBHOOK }} bash .github/publish.sh
 
       - name: Delete secring file
         run: |

@@ -5,7 +5,6 @@ ext["nexusUserName"] = System.getenv('NEXUS_USERNAME')
 ext["nexusPassword"] = System.getenv('NEXUS_PASSWORD')
 ext["signingKeyId"] = System.getenv('SIGNING_KEYID')
 ext["signingPassword"] = System.getenv('SIGNING_PASSWORD')
-ext["GROUP"] = 'com.kaltura.netkit'
 
 buildscript {
     repositories {
