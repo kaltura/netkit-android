@@ -36,11 +36,10 @@ release_and_tag() {
 
     echo Releasing version $NEW_VERSION of $REPO_NAME to GitHub
     set +e
-    git add $VERSION_FILE || fail "Version file not found $VERSION_FILE"
-    git add $BUILD_GRADLE || fail "Build file not found $BUILD_GRADLE"
+    git add $VERSION_FILE
     git commit -m "Update version to $NEW_TAG"
     set -e
-    git push origin HEAD:$BRANCH_NAME || fail "Unable to push $BRANCH_NAME"
+    git push origin HEAD:$BRANCH_NAME
 
     if [[ "$RELEASE_TYPE" = "Patch" || "$RELEASE_TYPE" = "Full" ]]; then
 
@@ -138,7 +137,6 @@ EOF
   REPO_NAME=$REPO_NAME
   MODULE_NAME=$MODULE_NAME
   VERSION_FILE=$MODULE_NAME/version.gradle
-  BUILD_GRADLE=$MODULE_NAME/build.gradle
   NETKIT_SERVICES_VERSION_FILE="services/version.gradle" #Special variable only for netkit to change the version file version
 
   REPO_URL=https://github.com/kaltura/$REPO_NAME
