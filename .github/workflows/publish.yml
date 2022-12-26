@@ -10,7 +10,6 @@ on:
         options:
           - Full
           - Patch
-          - Update
       new_version:
         description: "New Netkit Version (Without 'v' Ex: 1.0.0)"
         required: true
