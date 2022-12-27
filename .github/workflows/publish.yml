@@ -52,8 +52,7 @@ jobs:
         run: |
           RELEASE_TYPE=${RELEASE_TYPE} NEW_VERSION=${NEW_VERSION}
           PREV_VERSION=${PREV_VERSION} REPO_NAME=${REPO_NAME}
-          TOKEN=${{ secrets.GITHUB_TOKEN }} MODULE_NAME=${MODULE_NAME} 
-          TEAMS_WEBHOOK=${{ secrets.TEAMS_WEBHOOK }} bash .github/publish.sh
+          TOKEN=${{ secrets.GITHUB_TOKEN }} MODULE_NAME=${MODULE_NAME} TEAMS_WEBHOOK=${{ secrets.TEAMS_WEBHOOK }} bash .github/publish.sh
 
       - name: Delete secring file
         run: |

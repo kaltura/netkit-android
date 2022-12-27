@@ -54,13 +54,13 @@ EOF
     fi
 
     if [ "$RELEASE_TYPE" = "Update" ]; then
-                  JSON_BODY="### Netkit Plugin Support\n\n"
-                  JSON_BODY="$JSON_BODY$NEW_TAG\n\n"
-      JSON_BODY="$JSON_BODY * upgrade to $NEW_TAG\n\n"
-      JSON_BODY="$JSON_BODY #### Gradle\n\n"
-                  JSON_BODY="$JSON_BODY * implementation 'com.kaltura.netkit:netkit-core"
-      JSON_BODY="$NEW_VERSION"
-      JSON_BODY="$JSON_BODY'"
+                      JSON_BODY="### Netkit Plugin Support\n\n"
+                      JSON_BODY="$JSON_BODY$NEW_TAG\n\n"
+          JSON_BODY="$JSON_BODY * upgrade to $NEW_TAG\n\n"
+          JSON_BODY="$JSON_BODY #### Gradle\n\n"
+                      JSON_BODY="$JSON_BODY * implementation 'com.kaltura.netkit:netkit-core"
+          JSON_BODY="$NEW_VERSION"
+          JSON_BODY="$JSON_BODY'"
 
 
 cat << EOF > ./post.json
@@ -76,7 +76,7 @@ EOF
     cat post.json
 
     curl --request POST \
-         --url https://api.github.com/repos/kaltura/"$REPO_NAME"/releases \
+         --url https://api.github.com/repos/kaltura/$REPO_NAME/releases \
          --header "authorization: Bearer $TOKEN" \
          --header 'content-type: application/json' \
          -d@post.json
@@ -150,7 +150,6 @@ EOF
   NEW_VERSION=$NEW_VERSION
   PREV_VERSION=$PREV_VERSION
   TOKEN=$TOKEN
-  echo "$TOKEN"
   TEAMS_WEBHOOK=$TEAMS_WEBHOOK
 
   NEW_TAG=v$NEW_VERSION
