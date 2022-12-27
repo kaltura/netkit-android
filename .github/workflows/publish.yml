@@ -15,7 +15,7 @@ on:
         required: true
         type: string
       prev_version:
-        description: "Previous Netkit Version (Without 'v' Ex: 1.0.0): Important for Patch and Update"
+        description: "Previous Netkit Version (Without 'v' Ex: 1.0.0)"
         required: true
         type: string
 
