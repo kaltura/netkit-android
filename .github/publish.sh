@@ -150,6 +150,7 @@ EOF
   NEW_VERSION=$NEW_VERSION
   PREV_VERSION=$PREV_VERSION
   TOKEN=$TOKEN
+  echo "$TOKEN"
   TEAMS_WEBHOOK=$TEAMS_WEBHOOK
 
   NEW_TAG=v$NEW_VERSION
@@ -166,6 +167,6 @@ EOF
 
   checkout
   set_version
-  build
+  #build
   release_and_tag
-  notify_teams
+  #notify_teams
