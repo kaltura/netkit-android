@@ -11,11 +11,11 @@ on:
           - Full
           - Patch
       new_version:
-        description: "New Netkit Version (Without 'v' Ex: 1.0.0)"
+        description: "New Version (Without 'v' Ex: 1.0.0)"
         required: true
         type: string
       prev_version:
-        description: "Previous Netkit Version (Without 'v' Ex: 1.0.0)"
+        description: "Previous Version (Without 'v' Ex: 1.0.0)"
         required: true
         type: string
 
@@ -28,7 +28,7 @@ env:
   NEXUS_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
   SIGNING_KEYID: ${{ secrets.SIGNING_KEY_ID }}
   SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-  MODULE_NAME: "netkit"
+  MODULE_NAME: ${{ secrets.MODULE_NAME }}
 
 jobs:
   build:
@@ -42,11 +42,13 @@ jobs:
     steps:
       - name: Checkout repo and clone to CI workspace
         uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
 
       - name: Copy and Decode
         run: |
-            mkdir $PWD/.kltrenv && echo "${{ secrets.SIGNING_KEY }}" > $PWD/.kltrenv/secring.gpg.b64
-            base64 -d $PWD/.kltrenv/secring.gpg.b64 > $PWD/.kltrenv/secring.gpg
+          mkdir $PWD/.kltrenv && echo "${{ secrets.SIGNING_KEY }}" > $PWD/.kltrenv/secring.gpg.b64
+          base64 -d $PWD/.kltrenv/secring.gpg.b64 > $PWD/.kltrenv/secring.gpg
 
       - name: Run publish Script
         run: |
@@ -56,4 +58,4 @@ jobs:
 
       - name: Delete secring file
         run: |
-            rm -rf $PWD/.kltrenv
+          rm -rf $PWD/.kltrenv
