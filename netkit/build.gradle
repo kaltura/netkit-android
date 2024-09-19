@@ -2,14 +2,15 @@ apply plugin: 'com.android.library'
 apply from: 'version.gradle'
 
 android {
-    compileSdkVersion 33
+    namespace 'com.kaltura.netkit'
+    compileSdk 34
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 33
+        minSdkVersion 19
+        targetSdkVersion 34
         versionCode 1
         versionName netkitVersion  // defined in version.gradle
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -28,6 +29,15 @@ android {
 
     lintOptions {
         warning 'InvalidPackage'
+    }
+    buildFeatures {
+        buildConfig = true
+    }
+    publishing {
+        publishing {
+            singleVariant('release') {
+            }
+        }
     }
 }
 
