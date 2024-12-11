@@ -5,7 +5,7 @@
 # BINTRAY_USER, BINTRAY_KEY
 
 # Run locally:
-# TRAVIS_TAG=v0.1.2 BINTRAY_USER=username BINTRAY_KEY=fjkhsdfka3289r82rkfe ./travis-push-to-bintray.sh
+# TRAVIS_TAG=v0.1.2 BINTRAY_USER=username BINTRAY_KEY=some_key ./travis-push-to-bintray.sh
 
 
 DRY_RUN=false
@@ -27,7 +27,7 @@ if [[ ! $TAG_VERSION_NAME =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 # Check that defined library version matches the tag.
-if ! grep -q "ext.netkitVersion = '$TAG_VERSION_NAME'" version.gradle
+if ! grep -q "ext.netkitVersion = '$TAG_VERSION_NAME'" netkit/version.gradle
 then
     echo "Library version name in build.gradle does not match tag name; will perform a dry-run."
     DRY_RUN=true
