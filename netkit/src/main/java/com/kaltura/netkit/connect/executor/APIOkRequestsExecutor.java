@@ -143,7 +143,15 @@ public class APIOkRequestsExecutor implements RequestQueue {
                         if (ioe != null) {
                             msg += ioe.toString();
                         }
-                        log.e(msg);
+
+                        String logMsg = msg;
+                        Request req = call.request();
+                        if (req != null) {
+                            logMsg += "\nrequest: " + req.toString();
+                            logMsg += "\nrequest body:\n" + getRequestBody(req);
+                        }
+                        log.e(logMsg);
+
                         if (networkErrorEventListener != null) {
                             networkErrorEventListener.onError(ErrorElement.ServiceUnavailableError.addMessage(msg));
                         }
