@@ -148,7 +148,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                         Request req = call.request();
                         if (req != null) {
                             logMsg += "\nrequest: " + req.toString();
-                            logMsg += "\nrequest body:\n" + getRequestBody(req);
+                            logMsg += "\nrequest body:\n" + ((req.body() != null) ? getRequestBody(req) : "null");
                         }
                         log.e(logMsg);
 
